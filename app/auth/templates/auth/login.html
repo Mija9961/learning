@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Login - My App{% endblock %}
+
+{% block link %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/login_page.css') }}" />
+{% endblock %}
+
+{% block content %}
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-messages">
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <h2>Login</h2>
+
+  <!-- Trigger button -->
+  <button onclick="document.getElementById('id01').style.display='block'" style="width:auto; margin-left: 48%;border-radius: 10%;">Login</button>
+
+  <!-- The Modal -->
+  <div id="id01" class="modal">
+    <form class="modal-content animate" action="{{ url_for('auth.login') }}" method="POST">
+      {{ form.hidden_tag() }}
+      <div class="imgcontainer">
+        <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+        <img src="{{ url_for('static', filename='images/login_avatar.png') }}" alt="Avatar" class="avatar">
+      </div>
+
+      <div class="container">
+        <label for="username"><b>Username</b></label>
+        {{ form.username(class_='form-control', placeholder='Enter Username', required=True) }}
+
+        <label for="password"><b>Password</b></label>
+        {{ form.password(class_='form-control', placeholder='Enter Password', required=True) }}
+        
+        {{ form.submit(class_='btn btn-primary login-button', value='Login') }}
+        
+        <label>
+          {{ form.remember() }} Remember me
+        </label>
+      </div>
+
+      <div class="container" style="background-color:#f1f1f1">
+        <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+        <span class="psw">Forgot <a href="#">password?</a></span>
+      </div>
+    </form>
+  </div>
+{% endblock %}
+
+{% block script %}
+<script>
+  var modal = document.getElementById('id01');
+  window.onclick = function(event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  }
+</script>
+{% endblock %}

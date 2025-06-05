@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome - My App{% endblock %}
+
+{% block content %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-messages">
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+  
+<h1>Welcome to the Index Page</h1>
+<p>This is the home page for all visitors.</p>
+{% endblock %}

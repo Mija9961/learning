@@ -1,0 +1,60 @@
+
+{% extends "base.html" %}
+
+{% block link %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/interview_page.css') }}" />
+{% endblock %}
+
+{% block title %}Python | Learn{% endblock %}
+
+{% block content %}
+  <h1 class="heading">
+        Professor Python
+        <span class="tooltip" tabindex="0">
+            ?
+            <span class="tooltip-text">
+                Professor Python is your AI tutor, here to help you learn Python. To begin your session, just say something like 'Hi' or 'Hello'.
+            </span>
+        </span>
+  </h1>
+
+  <div id="videoContainer">
+    <video id="preview" autoplay muted></video>
+  </div>
+
+  <div id="chat-box">
+    {% for m in messages %}
+      <div class="user-message">{{ m.user }}</div>
+      <div class="bot-message"><button class="speak-btn" onclick="speakText(this)">🔊</button>{{ m.bot | safe | e}}</div>
+    {% endfor %}
+  </div>
+  
+
+  <form id="chat-form">
+    <input type="text" id="message" name="message" required autocomplete="off" placeholder="Type your message..." />
+    <button type="submit">Send</button>
+  </form>
+  <hr>
+  <div id="transcriptBox">🎤 <strong>Live Transcription:</strong> <em>Not active</em></div>
+
+  <div id="controls">
+    <input type="checkbox" id="autoSendToggle" />
+    <label for="autoSendToggle">Auto-send transcribed speech</label>
+    <br>
+    <button id="startVoiceBtn">🎙 Start Voice Input</button>
+    <button id="chatShowHideBtn" type="button">🙈 Hide Chat</button>
+    <button id="download-btn" type="button">💾 Download Chat</button>
+    <button id="downloadVideoBtn" type="button">📹 Record Video</button>
+    <button id="downloadScreenBtn" type="button">🖥️ Record Screen</button>
+
+  </div>
+  <!-- AI Avatar -->
+  <div id="avatar" class="avatar" title="I'm Professor Python! Drag me around!"></div>
+
+{% endblock %}
+
+{% block script %}
+  <script src="{{ url_for('static', filename='js/python/learn.js') }}"></script>
+
+{% endblock %}

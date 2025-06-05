@@ -1,0 +1,17 @@
+Flask
+Flask-SQLAlchemy
+Flask-Login
+Flask-Migrate
+email_validator
+flask-wtf
+pymysql
+Flask-Limiter
+python-dotenv
+flask-limiter[redis]
+mysqlclient
+flask_mysqldb
+
+autogen-agentchat
+autogen-ext
+autogen-ext[openai]
+
