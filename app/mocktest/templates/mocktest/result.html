@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block title %}Mock Test Result{% endblock %}
+
+{% block link %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/mocktest/result.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="result-container">
+    <h1>Test Result</h1>
+    <p class="score">Your Score: <strong>{{ score }}</strong> out of <strong>{{ total }}</strong></p>
+    
+    <div class="button-group">
+        <button id="toggleSummaryBtn">Show Summary</button>
+        <button id="downloadSummaryBtn" class="hidden">Download Summary</button>
+        <hr>
+        <a href="{{ url_for('mocktest.index') }}" class="btn">Back to Tests</a>
+    </div>
+    
+    <div id="summary" class="summary hidden">
+        <h2>Question Summary</h2>
+        {% for item in summary %}
+            <div class="summary-item">
+                <p><strong>Q{{ loop.index }}. {{ item.question }}</strong></p>
+                <p>Your Answer: 
+                    <span class="{{ 'correct' if item.is_correct else 'incorrect' }}">
+                        {{ item.selected_answer or 'No Answer Selected' }}
+                    </span>
+                </p>
+                <p>Correct Answer: <span class="correct">{{ item.correct_answer }}</span></p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    const toggleBtn = document.getElementById('toggleSummaryBtn');
+    const summary = document.getElementById('summary');
+    const downloadBtn = document.getElementById('downloadSummaryBtn');
+
+    toggleBtn.addEventListener('click', () => {
+        summary.classList.toggle('hidden');
+        downloadBtn.classList.toggle('hidden');
+        toggleBtn.textContent = summary.classList.contains('hidden') ? 'Show Summary' : 'Hide Summary';
+    });
+
+    downloadBtn.addEventListener('click', () => {
+        const summaryContent = summary.innerHTML;
+        const fullHtml = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mock Test Summary</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mocktest/result.css') }}">
+    <style>
+        .result-container {
+        max-width: 60%;
+        margin: 80px auto;
+        text-align: center;
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .result-container h1 {
+        margin-bottom: 20px;
+        color: #1a73e8;
+        font-size: 2em;
+    }
+
+    .result-container .score {
+        font-size: 1.2em;
+        margin-bottom: 20px;
+    }
+
+    .result-container .btn {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #1a73e8;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.2s;
+    }
+
+    .summary {
+        margin-top: 20px;
+        text-align: left;
+        background-color: #f8f8f8;
+        padding: 20px;
+        border-radius: 5px;
+    }
+
+    .summary-item {
+        border-bottom: 1px solid #ddd;
+        padding: 10px 0;
+    }
+
+    .summary-item:last-child {
+        border-bottom: none;
+    }
+
+    .correct {
+        color: #34a853;
+        font-weight: bold;
+    }
+
+    .incorrect {
+        color: #d93025;
+        font-weight: bold;
+    }
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .result-container {
+        max-width: 90%;
+        padding: 20px;
+    }
+
+    .result-container h1 {
+        font-size: 1.5em;
+    }
+
+    .result-container .score {
+        font-size: 1em;
+    }
+
+    .result-container .btn,
+    #toggleSummaryBtn {
+        width: 100%;
+        padding: 12px 0;
+        font-size: 1em;
+    }
+
+    .summary {
+        padding: 15px;
+    }
+}
+    </style>
+</head>
+<body>
+    <h1>Mock Test Summary</h1>
+    <p><strong>Score: {{ score }} / {{ total }}</strong></p>
+    <div class="summary">
+        ${summaryContent}
+    </div>
+</body>
+</html>
+        `;
+
+        const blob = new Blob([fullHtml], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'mocktest_summary.html';
+        a.click();
+
+        URL.revokeObjectURL(url);
+    });
+</script>
+{% endblock %}

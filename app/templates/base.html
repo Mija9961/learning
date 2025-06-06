@@ -14,7 +14,8 @@
   {% if session.get('username') %}
     <li><a class="{% if request.path == url_for('index') %}active{% endif %}" href="{{ url_for('index') }}">Home</a></li>
     <li><a class="{% if request.path == url_for('user.dashboard') %}active{% endif %}" href="{{ url_for('user.dashboard') }}">Dashboard</a></li>
-    <li><a class="{% if request.path == url_for('python.index') %}active{% endif %}" href="{{ url_for('python.index') }}">Python</a></li>
+    <li><a class="{% if request.path == url_for('python.index') %}active{% endif %}" href="{{ url_for('python.index') }}">Learn</a></li>
+    <li><a class="{% if request.path == url_for('mocktest.index') %}active{% endif %}" href="{{ url_for('mocktest.index') }}">Mock Test</a></li>
 
     <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
   {% else %}

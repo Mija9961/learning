@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block link %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/mocktest/test.css') }}">
+{% endblock %}
+
+{% block title %}Mock Test - {{ topic }}{% endblock %}
+
+{% block content %}
+<div class="mocktest-container">
+  <div id="timer">Time Left: 30:00</div>
+  <h1>Mock Test on {{ topic }}</h1>
+  <form id="mockTestForm">
+    {% for question in questions %}
+      {% set question_index = loop.index0 %}
+      <div class="question-block">
+        <p><strong>Q{{ loop.index }}. {{ question.question }}</strong></p>
+        {% for option in question.options %}
+          <input type="radio" name="q{{ question_index }}" value="{{ option }}" id="q{{ question_index }}_{{ loop.index0 }}">
+          <label for="q{{ question_index }}_{{ loop.index0 }}">{{ option }}</label><br>
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+    <div class="button-container">
+      <button type="button" id="prevBtn" disabled>Previous</button>
+      <button type="submit" id="submitBtn">Submit</button>
+      <button type="button" id="nextBtn">Next</button>
+    </div>
+  </form>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+  const currentQuestionIndex = {{ current_question_index|int }};
+  const remainingTimeFromServer = {{ remaining_time|int }};
+  const savedAnswers = {{ saved_answers|tojson }};
+
+</script>
+  <script src="{{ url_for('static', filename='js/mocktest/mocktest.js') }}"></script>
+{% endblock %}

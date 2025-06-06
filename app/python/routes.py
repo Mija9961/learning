@@ -4,10 +4,10 @@ from . import python_bp
 from app import db, limiter
 from app.models import User, Conversation
 from .util.llm_response import LLMResponse
+from .util.shared_state import chat_sessions
 import asyncio
 from uuid import uuid4
 from flask_limiter.errors import RateLimitExceeded
-
 
 @python_bp.route('/')
 @login_required
@@ -50,7 +50,7 @@ def interview():
     ]
 
     session_id = LLMResponse.get_session_id()
-    LLMResponse.chat_sessions[(session_id, 'interview')] = conversation_history[-20:]  # Send last 20 conversations to LLM
+    chat_sessions[session_id] = conversation_history[-20:]  # Send last 20 conversations to LLM
 
     return render_template('python/interview.html', messages=conversation_history, user=current_user)
 
@@ -90,8 +90,7 @@ def learn():
     ]
 
     session_id = LLMResponse.get_session_id()
-    LLMResponse.chat_sessions[(session_id, 'learn')] = conversation_history[-20:]  # Send last 20 conversations to LLM
-
+    chat_sessions[session_id] = conversation_history[-20:]  # Send last 20 conversations to LLM
     return render_template('python/learn.html', messages=conversation_history, user=current_user)
 
 
@@ -107,7 +106,7 @@ def ask():
     conversation_id = str(uuid4())
 
     try:
-        response = asyncio.run(LLMResponse.get_response(user_input, conversation_id))
+        response = asyncio.run(LLMResponse.get_response(user_input))
 
         new_convo = Conversation(
             user_email=user_email,
@@ -139,7 +138,7 @@ def ask_learn():
     conversation_id = str(uuid4())
 
     try:
-        response = asyncio.run(LLMResponse.get_response_learn(user_input, conversation_id))
+        response = asyncio.run(LLMResponse.get_response_learn(user_input))
 
         new_convo = Conversation(
             user_email=user_email,

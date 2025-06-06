@@ -129,41 +129,99 @@ def signup():
 
 
 
+# @auth_bp.route('/confirm_session', methods=['GET', 'POST'])
+# def confirm_session():
+#     if request.method == 'POST':
+#         action = request.form.get('action')
+#         if action == 'confirm':
+#             # User chose to logout other sessions
+#             session_token = session.pop('pending_token', None)
+#             username = session.pop('username_pending', None)
+#             user_id = session.pop('user_id_pending', None)
+
+#             if session_token and username and user_id:
+#                 # Update the session token in the database using SQLAlchemy
+#                 user = db.session.query(User).filter_by(id=user_id).first()
+#                 if user:
+#                     user.session_token = session_token
+#                     db.session.commit()
+
+#                     # Set active session data
+#                     session['username'] = username
+#                     session['session_token'] = session_token
+
+#                     flash("Logged in and other sessions are now logged out.", "success")
+#                     return redirect(url_for('index'))
+#                 else:
+#                     flash("User not found.", "danger")
+#                     return redirect(url_for('auth.login'))
+#             else:
+#                 flash("Session confirmation failed.", "danger")
+#                 return redirect(url_for('auth.login'))
+#         else:
+#             # Cancel and go back to login
+#             session.pop('pending_token', None)
+#             session.pop('username_pending', None)
+#             session.pop('user_id_pending', None)
+#             flash("Login cancelled.", "info")
+#             return redirect(url_for('auth.login'))
+
+#     return render_template('auth/confirm_session.html')
+
 @auth_bp.route('/confirm_session', methods=['GET', 'POST'])
 def confirm_session():
+    """
+    Confirms a pending session after the user is detected as already logged in elsewhere.
+    Offers the user the choice to logout other sessions and continue, or cancel.
+    """
+    # Ensure pending session data exists
+    pending_token = session.get('pending_token')
+    username_pending = session.get('username_pending')
+    user_id_pending = session.get('user_id_pending')
+
+    if not (pending_token and username_pending and user_id_pending):
+        flash("No pending session to confirm. Please log in again.", "warning")
+        return redirect(url_for('auth.login'))
+
     if request.method == 'POST':
         action = request.form.get('action')
+
         if action == 'confirm':
-            # User chose to logout other sessions
-            session_token = session.pop('pending_token', None)
-            username = session.pop('username_pending', None)
-            user_id = session.pop('user_id_pending', None)
+            # User chose to log out other sessions and proceed
+            user = User.query.filter_by(id=user_id_pending).first()
+            if user:
+                # Overwrite previous session token to invalidate old sessions
+                user.session_token = pending_token
+                db.session.commit()
 
-            if session_token and username and user_id:
-                # Update the session token in the database using SQLAlchemy
-                user = db.session.query(User).filter_by(id=user_id).first()
-                if user:
-                    user.session_token = session_token
-                    db.session.commit()
+                # Store new session data
+                session['username'] = username_pending
+                session['session_token'] = pending_token
 
-                    # Set active session data
-                    session['username'] = username
-                    session['session_token'] = session_token
+                # Clean up pending session keys
+                session.pop('pending_token', None)
+                session.pop('username_pending', None)
+                session.pop('user_id_pending', None)
 
-                    flash("Logged in and other sessions are now logged out.", "success")
-                    return redirect(url_for('home'))
-                else:
-                    flash("User not found.", "danger")
-                    return redirect(url_for('auth.login'))
+                flash("You have successfully confirmed your session. Other sessions have been logged out.", "success")
+                login_user(user)
+                return redirect(url_for('user.dashboard'))  # or wherever you'd like to land
+
             else:
-                flash("Session confirmation failed.", "danger")
+                flash("User not found. Please log in again.", "danger")
                 return redirect(url_for('auth.login'))
-        else:
-            # Cancel and go back to login
+
+        elif action == 'cancel':
+            # User cancelled session confirmation
             session.pop('pending_token', None)
             session.pop('username_pending', None)
             session.pop('user_id_pending', None)
-            flash("Login cancelled.", "info")
+
+            flash("Session confirmation cancelled. Please log in again.", "info")
             return redirect(url_for('auth.login'))
 
-    return render_template('auth/confirm_session.html')
+        else:
+            flash("Invalid action.", "danger")
+            return redirect(url_for('auth.confirm_session'))
+
+    return render_template('auth/confirm_session.html', username=username_pending)

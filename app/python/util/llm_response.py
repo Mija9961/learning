@@ -3,24 +3,23 @@ from autogen_ext.models.openai import OpenAIChatCompletionClient
 from dotenv import load_dotenv
 from uuid import uuid4
 from .instructions import instructions1, instructions_learn
-from flask import Flask, render_template, request, redirect, url_for, flash, session
-
+from flask import session
+from .shared_state import chat_sessions
 
 # Setup model
 system_messages = instructions1
 system_messages_learn = instructions_learn
 model_client = OpenAIChatCompletionClient(model="gpt-4.1-mini")
 
-class LLMResponse:
-    # Multi-tenant storage
-    chat_sessions = {}  # Dict: (session_id, conversation_type) -> list of {user, bot}
 
+class LLMResponse:
     @staticmethod
     def get_session_id():
         """Generate and retrieve the unique session ID for each user."""
         if "session_id" not in session:
             session["session_id"] = str(uuid4())  # Ensure the session_id is unique per user
         return session["session_id"]
+    
     
     @staticmethod
     def get_professor_interview(session_id):
@@ -33,12 +32,14 @@ class LLMResponse:
             system_message=system_messages,
         ), safe_name
 
-    async def get_response(message, session_id):
+    async def get_response(message):
         """Generate a response asynchronously using the professor (AssistantAgent)."""
+        session_id = LLMResponse.get_session_id()
+
         professor, professor_name = LLMResponse.get_professor_interview(session_id)
         
         # Fetch all previous chat history for the session
-        chat_history = LLMResponse.chat_sessions.get((session_id, 'interview'), [])
+        chat_history = chat_sessions.get(session_id, [])
 
         conversation_history = "\n".join([f"User: {entry['user']}\nBot: {entry['bot']}" for entry in chat_history])
         
@@ -65,18 +66,20 @@ class LLMResponse:
             system_message=system_messages_learn,
         ), safe_name
 
-    async def get_response_learn(message, session_id):
+    async def get_response_learn(message):
         """Generate a response asynchronously using the professor (AssistantAgent)."""
+        session_id = LLMResponse.get_session_id()
+
         professor, professor_name = LLMResponse.get_professor_learn(session_id)
         
+
         # Fetch all previous chat history for the session
-        chat_history = LLMResponse.chat_sessions.get((session_id, 'learn'), [])
+        chat_history = chat_sessions.get(session_id, [])
 
         conversation_history = "\n".join([f"User: {entry['user']}\nBot: {entry['bot']}" for entry in chat_history])
         
         # Now append the current user message to maintain the conversation flow
         conversation_history += f"\nUser: {message}\nBot:"
-        print("History: ",conversation_history)
         # Generate the bot's response based on the entire conversation context
         last_response = None
 

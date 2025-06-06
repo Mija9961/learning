@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block link %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/mocktest/index.css') }}" />
+<style>
+  body {
+    background: #f9f9f9;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+  }
+
+  .hero {
+    background: linear-gradient(135deg, #1a73e8, #4285f4);
+    color: white;
+    padding: 60px 20px;
+    text-align: center;
+    border-radius: 8px;
+    margin-bottom: 40px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
+
+  .hero h1 {
+    font-size: 2.8em;
+    margin: 0;
+  }
+
+  .topics-section {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .topics-section h2 {
+    text-align: center;
+    font-size: 1.8em;
+    margin-bottom: 20px;
+    color: #1a73e8;
+  }
+
+  .topics-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .topic-card {
+    background: #f0f4f8;
+    padding: 20px 30px;
+    border-radius: 8px;
+    text-align: center;
+    min-width: 150px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    text-decoration: none;
+    color: #333;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    cursor: pointer;
+  }
+
+  .topic-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  .topic-card h3 {
+    margin: 0;
+    font-size: 1.2em;
+    color: #1a73e8;
+  }
+
+  @media (max-width: 600px) {
+    .topic-card {
+      min-width: 100%;
+    }
+  }
+
+  /* Loading overlay styles */
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    display: none;
+  }
+
+  .loading-overlay.show {
+    display: flex;
+  }
+
+  .loading-overlay span {
+    background: #1a73e8;
+    color: white;
+    padding: 20px 30px;
+    border-radius: 8px;
+    font-size: 1.2em;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+</style>
+{% endblock %}
+
+{% block title %}Mock Tests | Choose a Topic{% endblock %}
+
+{% block content %}
+  <div class="hero">
+    <h1>Take a Mock Test</h1>
+    <p>Sharpen your skills by taking a quick test on your favorite topics!</p>
+  </div>
+
+  <div class="topics-section">
+    <h2>Select a Topic to Begin</h2>
+    <div class="topics-list">
+      <a class="topic-card" data-href="{{ url_for('mocktest.test', topic='python') }}">
+        <h3>Python</h3>
+      </a>
+      <a class="topic-card" data-href="{{ url_for('mocktest.test', topic='dsa') }}">
+        <h3>DSA</h3>
+      </a>
+      <!-- Add more topics as needed -->
+    </div>
+  </div>
+
+  <div class="loading-overlay" id="loadingOverlay">
+    <span>Generating questions, please wait...</span>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const topicCards = document.querySelectorAll('.topic-card');
+      const loadingOverlay = document.getElementById('loadingOverlay');
+
+      topicCards.forEach(card => {
+        card.addEventListener('click', function(e) {
+          e.preventDefault(); // Prevent immediate navigation
+          loadingOverlay.classList.add('show'); // Show overlay
+          window.location.href = card.getAttribute('data-href'); // Navigate to the test
+        });
+      });
+    });
+  </script>
+{% endblock %}

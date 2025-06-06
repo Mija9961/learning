@@ -1,0 +1,85 @@
+.mocktest-container {
+  position: relative;
+  max-width: 80%;
+  margin: 0 auto;
+  text-align: left;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+#timer {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-weight: bold;
+  background-color: #f0f0f0;
+  padding: 5px 10px;
+  border-radius: 5px;
+  float: right;
+  font-size: 1.1em;
+  color: #d93025;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 40px;
+  color: #1a73e8;
+  font-size: 2em;
+}
+
+.question-block {
+  margin-top: 100px; /* to leave space for the timer */
+  display: none;
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-left: 4px solid #1a73e8;
+  border-radius: 5px;
+}
+
+.question-block p {
+  font-size: 1.1em;
+  margin-bottom: 10px;
+}
+
+.question-block label {
+  cursor: pointer;
+  margin-left: 5px;
+}
+
+.button-container {
+  position: fixed;
+  bottom: 20px;
+  width: 80%;
+  left: 10%;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 50px;
+}
+
+#submitBtn {
+  margin: 0 auto;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  width: 80px;
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+  background-color: #1669c1;
+}
