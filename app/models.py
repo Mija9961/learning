@@ -1,5 +1,6 @@
 from .extensions import db
 from flask_login import UserMixin
+from sqlalchemy.dialects.mysql import JSON
 
 # Define Models
 class User(db.Model, UserMixin):
@@ -19,3 +20,15 @@ class Conversation(db.Model, UserMixin):
     conversation_id = db.Column(db.String(255))
     conversation_type = db.Column(db.String(255))
     timestamp = db.Column(db.DateTime, server_default=db.func.now())
+
+
+class MockTestData(db.Model, UserMixin):
+    __tablename__ = 'mock_test_questions'
+
+    id = db.Column(db.Integer, primary_key=True)
+    question_set_no = db.Column(db.Integer, nullable=False)
+    subject = db.Column(db.String(100), nullable=False)
+    data = db.Column(JSON, nullable=False)
+
+    def __repr__(self):
+        return f"<MockTestData(id={self.id}, question_set_no={self.question_set_no}, subject={self.subject})>"

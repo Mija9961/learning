@@ -121,7 +121,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     answers: {}
                 })
             });
-            window.location.href = `/mocktest/result?score=${data.score}&total=${data.total}`;
+            window.location.href = `/mocktest/result`;
         })
         .catch(error => console.error('Error:', error));
     }
