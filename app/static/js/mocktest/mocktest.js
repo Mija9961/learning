@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function() {
-    // Use the remaining time from server or default 30 mins
-    let timeLeft = typeof remainingTimeFromServer !== 'undefined' ? remainingTimeFromServer : 30 * 60; // seconds
+    // Use the remaining time from server or default 10 mins
+    let timeLeft = typeof remainingTimeFromServer !== 'undefined' ? remainingTimeFromServer : 10 * 60; // seconds
 
     const timerDisplay = document.getElementById("timer");
 
@@ -16,9 +16,9 @@ document.addEventListener("DOMContentLoaded", function() {
         }
         timeLeft--;
         // Save remaining time to session every tick (or every few seconds for optimization)
-        if (timeLeft % 5 === 0) { // every 5 seconds
-            saveProgress();
-        }
+        // if (timeLeft % 120 === 0) { // every 120 seconds
+        //     saveProgress();
+        // }
     }, 1000);
 
     // Start from the saved current question index or 0
@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function() {
         currentQuestion = Math.min(currentQuestion + 1, questions.length - 1);
         questions[currentQuestion].style.display = "block";
         updateButtons();
-        saveProgress();
+        // saveProgress();
     });
 
     prevBtn.addEventListener("click", function() {
@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     current_question_index: 0,
-                    remaining_time: 30 * 60,
+                    remaining_time: 10 * 60,
                     answers: {}
                 })
             });

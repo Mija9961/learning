@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from uuid import uuid4
 from .instructions import instructions
 from flask import session
-from .shared_state import mock_questions, mock_answers
+from .shared_state import mocktest_sessions
 import asyncio, json
 load_dotenv()
 # Setup model
@@ -37,21 +37,33 @@ class LLMResponse:
 
         professor, professor_name = LLMResponse.get_professor_mocktest(session_id)
         
+        # Fetch all previous chat history for the session
+        chat_history = mocktest_sessions.get(session_id, [])
+        task = str({'history': chat_history, 'topic': topic})
         last_response = None
 
-        async for chunk in professor.run_stream(task=topic):
+        async for chunk in professor.run_stream(task=task):
             if hasattr(chunk, "content") and getattr(chunk, "source", "") == professor_name:
                 last_response = chunk.content
-        # last_response = await professor.run(task=topic)
-        print(last_response)
         return last_response or "Sorry, I couldn't generate a response."
 
     @staticmethod
     def get_question_paper(topic):
         response = asyncio.run(LLMResponse.get_response_mocktest(topic))
-        print(f"Question paper type: {type(response)} ")
-        print(f"Question paper: {response} ")
 
         response = json.loads(response)
-        
+        print(f"Response: {response}")
+        # 🟠 Correctly extract questions
+        questions_dict = response.get('mock_questions', {})
+        questions = questions_dict.get(topic, [])
+
+        session_id = LLMResponse.get_session_id()
+
+        if session_id not in mocktest_sessions:
+            mocktest_sessions[session_id] = {}
+        if topic not in mocktest_sessions[session_id]:
+            mocktest_sessions[session_id][topic] = []
+
+        mocktest_sessions[session_id][topic].extend(questions)
+
         return response.get('mock_questions', []), response.get('mock_answers', [])

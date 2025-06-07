@@ -72,7 +72,7 @@ def index():
 #     # Calculate remaining time
 #     start_time = datetime.fromisoformat(session.get('start_time'))
 #     elapsed_time = (datetime.utcnow() - start_time).total_seconds()
-#     remaining_time = max(0, 1800 - elapsed_time)  # 30 min limit
+#     remaining_time = max(0, 1800 - elapsed_time)  # 10 min limit
 
 #     return render_template(
 #         'mocktest/test.html',
@@ -95,7 +95,7 @@ def test(topic):
     current_question_index = session.get('current_question_index', 0)
     
     # (Optional) Load remaining time if you also want to persist timer
-    remaining_time = session.get('remaining_time', 30 * 60)  # 30 minutes in seconds
+    remaining_time = session.get('remaining_time', 10 * 60)  # 10 minutes in seconds
     saved_answers = session.get('saved_answers', {})
 
     return render_template(
@@ -166,5 +166,8 @@ def submit():
     session.pop('mock_answers', None)
     session.pop('current_topic', None)
     session.pop('start_time', None)
+    session.pop('remaining_time', None)
+    session.pop('save_answers', None)
+
 
     return jsonify({'redirect_url': url_for('mocktest.result')})
