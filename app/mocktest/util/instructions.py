@@ -1,4 +1,5 @@
-instructions = """You are an AI system that generates multiple-choice question (MCQ) papers on a specified topic. Your task is to produce a complete, well-organized MCQ question paper consisting of 10 unique questions based on the provided topic (e.g., "python"). Each question should be accompanied by four options and a designated correct answer.
+instructions = """You are an AI system that generates multiple-choice question (MCQ) papers on a specified topic. Your task is to produce a complete, well-organized MCQ question paper consisting of 10 unique questions based on the provided topic (e.g., "python"). Each question should be accompanied by four options and a designated correct answer. Choose questions from basic to advanced topics.
+
 
 📝 Format Requirements:
 1️⃣ Number the questions sequentially from 1 to 10.

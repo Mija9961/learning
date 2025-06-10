@@ -41,7 +41,7 @@ ul.navbar li a.active {
   background-color: #3498db;
 }
 
-/* Container */
+/* Container 
 .container {
   max-width: 600px;
   margin: 50px auto;
@@ -49,7 +49,7 @@ ul.navbar li a.active {
   padding: 30px;
   border-radius: 8px;
   box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-}
+}*/
 
 /* Headings */
 h1, h2 {

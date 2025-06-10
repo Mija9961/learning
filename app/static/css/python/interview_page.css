@@ -1,7 +1,7 @@
 body {
     font-family: Arial, sans-serif;
     padding: 10px;
-    background: #f0f0f0;
+    background-color: #8d977c;
 }
 
 h1 {
@@ -23,7 +23,7 @@ h1 {
 }
 
 .user-message {
-    background: #d4edda;
+    background: #d4eddaec;
     color: #155724;
     padding: 10px;
     margin: 5px 0;
@@ -32,7 +32,7 @@ h1 {
 }
 
 .bot-message {
-    background: #e0e0e0;
+    background: #e0f7fa;
     color: #303235;
     padding: 10px;
     margin: 5px 0;
@@ -77,7 +77,7 @@ h1 {
 }
 
 #videoContainer {
-    position: absolute;
+    position: fixed;
     bottom: 20px;
     right: 20px;
     width: 220px;
@@ -102,7 +102,7 @@ top: 60px;
 left: 10px;
 width: 200px;
 height: 200px;
-background-image: url("../images/avatar.png");
+background-image: url("../../images/avatar.png");
 background-size: cover;
 background-position: center;
 border-radius: 50%;
@@ -116,54 +116,58 @@ transition: transform 0.2s ease-in-out;
 animation: speak-animation 0.3s infinite alternate;
 }
 
+/* Container for the tooltip */
+.tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  font-weight: bold;
+  color: #555;
+}
+
+/* Tooltip text (hidden by default) */
+.tooltip .tooltip-text {
+  visibility: hidden;
+  width: 250px;
+  background-color: #333;
+  color: #fff;
+  text-align: left;
+  padding: 10px;
+  border-radius: 8px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%; /* Position above the icon */
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+/* Tooltip arrow */
+.tooltip .tooltip-text::after {
+  content: "";
+  position: absolute;
+  top: 100%; /* Arrow pointing down */
+  left: 50%;
+  margin-left: -6px;
+  border-width: 6px;
+  border-style: solid;
+  border-color: #333 transparent transparent transparent;
+}
+
+/* Show the tooltip on hover or focus */
+.tooltip:hover .tooltip-text,
+.tooltip:focus .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
 @keyframes speak-animation {
 0% { transform: scale(1); }
 100% { transform: scale(1.05); }
-}
-
-.tooltip {
-    display: inline-block;
-    background-color: #3B81F6;
-    color: white;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    font-size: 14px;
-    line-height: 20px;
-    text-align: center;
-    cursor: pointer;
-    position: relative;
-    flex-shrink: 0;
-    outline: none;
-}
-
-.tooltip-text {
-    visibility: hidden;
-    max-width: 90vw;
-    width: 280px;
-    background-color: #555;
-    color: #fff;
-    text-align: left;
-    border-radius: 6px;
-    padding: 10px;
-    position: absolute;
-    z-index: 10;
-    top: 130%;
-    left: 50%;
-    transform: translateX(-50%);
-    opacity: 0;
-    transition: opacity 0.3s;
-    font-size: 14px;
-    line-height: 1.4;
-    white-space: normal;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Show tooltip on hover or keyboard focus */
-.tooltip:hover .tooltip-text,
-.tooltip:focus .tooltip-text {
-    visibility: visible;
-    opacity: 1;
 }
 /* Media Queries for Mobile Screens */
 @media (max-width: 600px) {
@@ -192,12 +196,6 @@ animation: speak-animation 0.3s infinite alternate;
     #controls button {
     width: 100%;
     }
-}
-
-
-
-/* Responsive adjustments */
-@media (max-width: 600px) {
     .tooltip-text {
         font-size: 13px;
         width: 90vw;

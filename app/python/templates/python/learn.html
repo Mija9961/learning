@@ -2,23 +2,29 @@
 {% extends "base.html" %}
 
 {% block link %}
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/interview_page.css') }}" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/python/interview_page.css') }}" />
+  <!-- Bootstrap Icons CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 {% endblock %}
 
 {% block title %}Python | Learn{% endblock %}
 
 {% block content %}
   <h1 class="heading">
-        Professor Python
-        <span class="tooltip" tabindex="0">
-            ?
-            <span class="tooltip-text">
-                Professor Python is your AI tutor, here to help you learn Python. To begin your session, just say something like 'Hi' or 'Hello'.
-            </span>
-        </span>
+    Professor Python
+    <i 
+      class="bi bi-question-circle-fill" 
+      tabindex="0"
+      data-bs-toggle="tooltip" 
+      data-bs-placement="right" 
+      data-bs-trigger="hover focus click"
+      title="Professor Python is your AI tutor, here to help you learn Python.
+      To begin your session, just say something like 'Hi' or 'Hello'."
+      style="cursor: pointer; font-size: 0.6em; margin-left: 2px;"
+    ></i>
   </h1>
-
+  <br>
   <div id="videoContainer">
     <video id="preview" autoplay muted></video>
   </div>

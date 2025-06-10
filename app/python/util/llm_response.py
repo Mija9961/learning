@@ -2,12 +2,12 @@ from autogen_agentchat.agents import AssistantAgent
 from autogen_ext.models.openai import OpenAIChatCompletionClient
 from dotenv import load_dotenv
 from uuid import uuid4
-from .instructions import instructions1, instructions_learn
+from .instructions import instructions, instructions_learn
 from flask import session
 from .shared_state import chat_sessions
-
+from bs4 import BeautifulSoup
 # Setup model
-system_messages = instructions1
+system_messages = instructions
 system_messages_learn = instructions_learn
 model_client = OpenAIChatCompletionClient(model="gpt-4.1-mini")
 
@@ -48,12 +48,20 @@ class LLMResponse:
 
         # Generate the bot's response based on the entire conversation context
         last_response = None
+        conversation_history_clean_text = LLMResponse.remove_html_tags(conversation_history)
 
-        async for chunk in professor.run_stream(task=conversation_history):
+        print("Conversation history: ", conversation_history_clean_text)
+        async for chunk in professor.run_stream(task=conversation_history_clean_text):
             if hasattr(chunk, "content") and getattr(chunk, "source", "") == professor_name:
                 last_response = chunk.content
 
         return last_response or "Sorry, I couldn't generate a response."
+    
+
+    @staticmethod
+    def remove_html_tags(text):
+        soup = BeautifulSoup(text, 'html.parser')
+        return soup.get_text()
     
     @staticmethod
     def get_professor_learn(session_id):
@@ -82,8 +90,8 @@ class LLMResponse:
         conversation_history += f"\nUser: {message}\nBot:"
         # Generate the bot's response based on the entire conversation context
         last_response = None
-
-        async for chunk in professor.run_stream(task=conversation_history):
+        conversation_history_clean_text = LLMResponse.remove_html_tags(conversation_history)
+        async for chunk in professor.run_stream(task=conversation_history_clean_text):
             if hasattr(chunk, "content") and getattr(chunk, "source", "") == professor_name:
                 last_response = chunk.content
 

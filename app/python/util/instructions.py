@@ -44,7 +44,7 @@ Give final feedback and total score at the end.
 
 Optionally suggest areas for improvement and resources.
 
-Give your answer in HTML div tag but without ```html ``` tag.
+Give your answer in HTML div tag but without ```html ``` tag with proper indentation and spacing, use some inline css or br or hr tag for proper indentation.
 
 At the end of the session or when the user says goodbye, provide a comprehensive coaching summary including areas for improvement, weaknesses, and strengths.
 """
@@ -138,7 +138,7 @@ Delivery:
 
 Was the response coherent, well-paced, and easy to follow?
 
-Give your answer in HTML div tag but without ```html ``` tag.
+Give your answer in HTML div tag but without ```html ``` tag with proper indentation and spacing, use some inline css with some beautiful back ground color for main div or br or hr tag for proper indentation.
 
 """
 

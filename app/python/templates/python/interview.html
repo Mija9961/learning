@@ -3,14 +3,24 @@
 
 {% block link %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/interview_page.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/python/interview_page.css') }}" />
 {% endblock %}
 
 {% block title %}Mock Interview{% endblock %}
 
 {% block content %}
-<h1>Python Mock Interview</h1>
-
+  <h1 class="heading">
+    Python Mock Interview        
+    <i 
+      class="bi bi-question-circle-fill" 
+      tabindex="0"
+      data-bs-toggle="tooltip" 
+      data-bs-placement="right" 
+      data-bs-trigger="hover focus click"
+      title="To begin your session, just say something like 'Hi' or 'Hello'."
+      style="cursor: pointer; font-size: 0.6em; margin-left: 2px;"
+    ></i>
+  </h1>
   <div id="videoContainer">
     <video id="preview" autoplay muted></video>
   </div>

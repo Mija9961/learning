@@ -10,6 +10,7 @@ python-dotenv
 flask-limiter[redis]
 mysqlclient
 flask_mysqldb
+beautifulsoup4
 
 autogen-agentchat
 autogen-ext

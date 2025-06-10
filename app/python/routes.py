@@ -5,7 +5,7 @@ from app import db, limiter
 from app.models import User, Conversation
 from .util.llm_response import LLMResponse
 from .util.shared_state import chat_sessions
-import asyncio
+import asyncio, re
 from uuid import uuid4
 from flask_limiter.errors import RateLimitExceeded
 
@@ -117,7 +117,10 @@ def ask():
         )
         db.session.add(new_convo)
         db.session.commit()
+        # Append user input and bot response to chat history
+        session_id = LLMResponse.get_session_id()
 
+        chat_sessions.setdefault(session_id, []).append({"user": user_input, "bot": response})
         return jsonify({"response": response})
     except Exception as e:
         db.session.rollback()
@@ -149,7 +152,11 @@ def ask_learn():
         )
         db.session.add(new_convo)
         db.session.commit()
+        
+        # Append user input and bot response to chat history
+        session_id = LLMResponse.get_session_id()
 
+        chat_sessions.setdefault(session_id, []).append({"user": user_input, "bot": re.sub(r'<.*?>', '', response)})
         return jsonify({"response": response})
     except Exception as e:
         db.session.rollback()
