@@ -22,12 +22,14 @@ def create_app():
     from .user import user_bp
     from .python import python_bp  # local import avoids circular dependency
     from .mocktest import mocktest_bp  # local import avoids circular dependency
-
+    from .autogen import autogen_bp
+    
     app.register_blueprint(auth_bp)
     app.register_blueprint(admin_bp, url_prefix='/admin')
     app.register_blueprint(user_bp, url_prefix='/user')
     app.register_blueprint(python_bp, url_prefix='/python')
     app.register_blueprint(mocktest_bp, url_prefix='/mocktest')
+    app.register_blueprint(autogen_bp, url_prefix='/autogen')
 
     with app.app_context():
         db.create_all()

@@ -19,6 +19,7 @@ class Conversation(db.Model, UserMixin):
     bot_response = db.Column(db.Text, nullable=False)
     conversation_id = db.Column(db.String(255))
     conversation_type = db.Column(db.String(255))
+    subject = db.Column(db.String(100), nullable=False)
     timestamp = db.Column(db.DateTime, server_default=db.func.now())
 
 

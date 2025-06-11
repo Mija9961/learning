@@ -1,0 +1,66 @@
+
+{% extends "base.html" %}
+
+{% block link %}
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/python/interview_page.css') }}" />
+  <!-- Bootstrap Icons CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+{% endblock %}
+
+{% block title %}Autogen | Learn{% endblock %}
+
+{% block content %}
+  <h1 class="heading">
+    Professor Autogen
+    <i 
+      class="bi bi-question-circle-fill" 
+      tabindex="0"
+      data-bs-toggle="tooltip" 
+      data-bs-placement="right" 
+      data-bs-trigger="hover focus click"
+      title="Professor AutoGen is your AI tutor, here to help you learn Autogen.
+      To begin your session, just say something like 'Hi' or 'Hello'."
+      style="cursor: pointer; font-size: 0.6em; margin-left: 2px;"
+    ></i>
+  </h1>
+  <br>
+  <div id="videoContainer">
+    <video id="preview" autoplay muted></video>
+  </div>
+
+  <div id="chat-box">
+    {% for m in messages %}
+      <div class="user-message">{{ m.user }}</div>
+      <div class="bot-message"><button class="speak-btn" onclick="speakText(this)">🔊</button>{{ m.bot | safe | e}}</div>
+    {% endfor %}
+  </div>
+  
+
+  <form id="chat-form">
+    <input type="text" id="message" name="message" required autocomplete="off" placeholder="Type your message..." />
+    <button type="submit">Send</button>
+  </form>
+  <hr>
+  <div id="transcriptBox">🎤 <strong>Live Transcription:</strong> <em>Not active</em></div>
+
+  <div id="controls">
+    <input type="checkbox" id="autoSendToggle" />
+    <label for="autoSendToggle">Auto-send transcribed speech</label>
+    <br>
+    <button id="startVoiceBtn">🎙 Start Voice Input</button>
+    <button id="chatShowHideBtn" type="button">🙈 Hide Chat</button>
+    <button id="download-btn" type="button">💾 Download Chat</button>
+    <button id="downloadVideoBtn" type="button">📹 Record Video</button>
+    <button id="downloadScreenBtn" type="button">🖥️ Record Screen</button>
+
+  </div>
+  <!-- AI Avatar -->
+  <div id="avatar" class="avatar" title="I'm Professor Autogen! Drag me around!"></div>
+
+{% endblock %}
+
+{% block script %}
+  <script src="{{ url_for('static', filename='js/autogen/learn.js') }}"></script>
+
+{% endblock %}

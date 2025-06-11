@@ -96,7 +96,7 @@ form.addEventListener("submit", function(e) {
     if (msg) {
     appendMessage("user", msg);
     messageInput.value = "";
-    $.post("/python/ask/learn", { message: msg }, function(data) {
+    $.post("/autogen/ask/learn", { message: msg }, function(data) {
         appendMessage("bot", data.response);
     });
     }
@@ -162,7 +162,7 @@ document.getElementById("download-btn").addEventListener("click", function () {
 <!DOCTYPE html>
 <html>
 <head>
-<title>Professor Python</title>
+<title>Professor Autogen</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
@@ -173,7 +173,7 @@ body { padding: 10px; font-family: Arial; }
 </style>
 </head>
 <body>
-<h1 style="text-align:center;">Professor Python</h1>
+<h1 style="text-align:center;">Professor Autogen</h1>
 <div id="chat-box">
 ${chatContent}
 </div>
@@ -258,7 +258,7 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
         // Send final transcript if auto-send is enabled
         if (autoSendToggle.checked && finalTranscript.trim()) {
             appendMessage("user", finalTranscript.trim());
-            $.post("/python/ask/learn", { message: finalTranscript.trim() }, function(data) {
+            $.post("/autogen/ask/learn", { message: finalTranscript.trim() }, function(data) {
                 appendMessage("bot", data.response);
             });
             finalTranscript = '';  // reset for next session

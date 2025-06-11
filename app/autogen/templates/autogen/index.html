@@ -69,8 +69,8 @@
             <p class="card-text">
               Learn essential Data Structures and Algorithms concepts — from arrays and linked lists to graphs and dynamic programming — and ace technical interviews with confidence.
             </p>
-            <a href="{{ url_for('python.learn') }}" 
-              class="btn btn-primary {% if request.path == url_for('python.learn') %}active{% endif %}">
+            <a href="{{ url_for('python.ask') }}" 
+              class="btn btn-primary {% if request.path == url_for('python.ask') %}active{% endif %}">
               Start Learning
             </a>
           </div>
@@ -91,42 +91,7 @@
           </div>
         </div>
       </div>
-
-      <p></p>
-      <hr>
-      <!-- AUTOGEN -->
-
-      <h4 class="display-4 mb-4">AUTOGEN</h4>
-      <div class="col-md-6 mb-4">
-        <div class="card h-100 shadow-sm">
-          <div class="card-body">
-            <h3 class="card-title">🧑‍🎓 Learn AUTOGEN</h3>
-            <p class="card-text">
-              Learn essential AutoGen concepts — from building agents and orchestrating tasks to integrating APIs and error handling — and build powerful, real-world LLM-based systems with confidence.            </p>
-            <a href="{{ url_for('autogen.learn') }}" 
-              class="btn btn-primary {% if request.path == url_for('autogen.learn') %}active{% endif %}">
-              Start Learning
-            </a>
-          </div>
-        </div>
-      </div>
-      <!-- DSA Interview Practice -->
-      <div class="col-md-6 mb-4">
-        <div class="card h-100 shadow-sm">
-          <div class="card-body">
-            <h3 class="card-title">💼 AUTOGEN Interview Practice</h3>
-            <p class="card-text">
-              Sharpen your AutoGen skills with interview-focused practice sets, scenario-based challenges, and expert insights to ace real-world LLM system development and impress in technical interviews.            </p>
-            <a href="{{ url_for('autogen.interview') }}" 
-              class="btn btn-success {% if request.path == url_for('autogen.interview') %}active{% endif %}">
-              Start Interview Practice
-            </a>
-          </div>
-        </div>
-      </div>
-
-
-
     </div>
+
   </div>
 {% endblock %}

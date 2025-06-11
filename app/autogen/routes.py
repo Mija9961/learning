@@ -1,6 +1,6 @@
 from flask import render_template, jsonify, request, flash, session, redirect, url_for
 from flask_login import login_required, current_user
-from . import python_bp
+from . import autogen_bp
 from app import db, limiter
 from app.models import User, Conversation
 from .util.llm_response import LLMResponse
@@ -9,13 +9,9 @@ import asyncio, re
 from uuid import uuid4
 from flask_limiter.errors import RateLimitExceeded
 
-@python_bp.route('/')
-@login_required
-def index():
-    return render_template('python/index.html', user=current_user)
 
 
-@python_bp.route('/interview')
+@autogen_bp.route('/interview')
 @login_required
 def interview():
     if 'username' not in session:
@@ -34,7 +30,7 @@ def interview():
         # Fetch conversations for this user and conversation_type
         conversations = (
             Conversation.query
-            .filter_by(user_email=user_email, conversation_type='interview', subject='python')
+            .filter_by(user_email=user_email, conversation_type='interview', subject='autogen')
             .order_by(Conversation.timestamp.asc())
             .all()
         )
@@ -52,10 +48,10 @@ def interview():
     session_id = LLMResponse.get_session_id()
     chat_sessions[session_id] = conversation_history[-20:]  # Send last 20 conversations to LLM
 
-    return render_template('python/interview.html', messages=conversation_history, user=current_user)
+    return render_template('autogen/interview.html', messages=conversation_history, user=current_user)
 
 
-@python_bp.route('/learn')
+@autogen_bp.route('/learn')
 @login_required
 def learn():
     if 'username' not in session:
@@ -74,7 +70,7 @@ def learn():
         # Fetch conversations for this user and conversation_type
         conversations = (
             Conversation.query
-            .filter_by(user_email=user_email, conversation_type='learn', subject='python')
+            .filter_by(user_email=user_email, conversation_type='learn', subject='autogen')
             .order_by(Conversation.timestamp.asc())
             .all()
         )
@@ -91,10 +87,10 @@ def learn():
 
     session_id = LLMResponse.get_session_id()
     chat_sessions[session_id] = conversation_history[-20:]  # Send last 20 conversations to LLM
-    return render_template('python/learn.html', messages=conversation_history, user=current_user)
+    return render_template('autogen/learn.html', messages=conversation_history, user=current_user)
 
 
-@python_bp.route('/ask/interview', methods=['POST'])
+@autogen_bp.route('/ask/interview', methods=['POST'])
 @limiter.limit("20 per minute")
 @login_required
 def ask():
@@ -114,7 +110,7 @@ def ask():
             bot_response=response,
             conversation_id=conversation_id,
             conversation_type='interview',
-            subject='python'
+            subject='autogen'
         )
         db.session.add(new_convo)
         db.session.commit()
@@ -130,7 +126,7 @@ def ask():
 
 
 
-@python_bp.route('/ask/learn', methods=['POST'])
+@autogen_bp.route('/ask/learn', methods=['POST'])
 @limiter.limit("20 per minute")
 @login_required
 def ask_learn():
@@ -150,7 +146,7 @@ def ask_learn():
             bot_response=response,
             conversation_id=conversation_id,
             conversation_type='learn',
-            subject='python'
+            subject='autogen'
         )
         db.session.add(new_convo)
         db.session.commit()
@@ -166,7 +162,7 @@ def ask_learn():
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
 
-@python_bp.errorhandler(RateLimitExceeded)
+@autogen_bp.errorhandler(RateLimitExceeded)
 def ratelimit_handler(e):
     return jsonify({
         "response": e.description
