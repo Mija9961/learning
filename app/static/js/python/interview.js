@@ -659,3 +659,81 @@ document.addEventListener("DOMContentLoaded", function() {
         new bootstrap.Tooltip(tooltipTriggerEl);
     });
 });
+
+
+
+// For code editor
+document.getElementById('showEditorBtn').addEventListener('click', function () {
+const modal = new bootstrap.Modal(document.getElementById('codeEditorModal'));
+modal.show();
+});
+// For CodeMirror
+let editor;
+  document.addEventListener("DOMContentLoaded", function () {
+    editor = CodeMirror.fromTextArea(document.getElementById("pythonCode"), {
+      mode: { name: "python", version: 3, singleLineStringErrors: false },
+      theme: "material",
+      lineNumbers: true,
+      lineWrapping: true,
+      indentUnit: 4,
+      tabSize: 4,
+    });
+
+    // Optional: refresh CodeMirror in case it's in a hidden modal
+    setTimeout(() => editor.refresh(), 100);
+  });
+
+let pyodideReady = false;
+let pyodide = null;
+
+async function loadPyodideAndPackages() {
+  pyodide = await loadPyodide();
+  pyodideReady = true;
+}
+
+loadPyodideAndPackages();
+
+document.getElementById("runPythonBtn").addEventListener("click", async () => {
+  const code = editor.getValue(); //document.getElementById("pythonCode").value;
+  const outputElement = document.getElementById("pythonOutput");
+
+  if (!pyodideReady) {
+    outputElement.textContent = "Pyodide is still loading...";
+    return;
+  }
+
+  try {
+    let output = [];
+    let error = [];
+
+    // Capture stdout and stderr
+    pyodide.setStdout({
+      batched: (msg) => output.push(msg)
+    });
+    pyodide.setStderr({
+      batched: (msg) => error.push(msg)
+    });
+
+    await pyodide.runPythonAsync(code);
+
+    if (error.length > 0) {
+      outputElement.textContent = `❌ Error:\n${error.join("")}`;
+    } else {
+      outputElement.textContent = output.join("") || "✓ Code executed";
+    }
+  } catch (err) {
+    outputElement.textContent = `❌ Exception:\n${err}`;
+  }
+});
+
+// Copy code
+document.getElementById("copyCodeBtn").addEventListener("click", function () {
+    const code = editor.getValue();
+    navigator.clipboard.writeText(code).then(() => {
+    this.innerText = "✅ Copied!";
+    setTimeout(() => this.innerText = "📋 Copy", 2000);
+    }).catch(err => {
+    console.error('Copy failed', err);
+    alert("Copy failed. Please try manually.");
+    });
+});

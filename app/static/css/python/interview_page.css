@@ -74,6 +74,7 @@ h1 {
 
 #controls {
     margin-top: 10px;
+    margin-bottom: 20px;
 }
 
 #videoContainer {
@@ -163,6 +164,12 @@ animation: speak-animation 0.3s infinite alternate;
 .tooltip:focus .tooltip-text {
   visibility: visible;
   opacity: 1;
+}
+#copyCodeBtn, #runPythonBtn {
+  width: 100px;
+  height: 40px;
+  margin-top: 2px;
+  padding: auto;
 }
 
 @keyframes speak-animation {
