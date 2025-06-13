@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Users - poroOsekho {% endblock %}
+
+{% block link %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+{% endblock %}
+
+{% block content %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-messages">
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<div class="container" style="width: 80%;">
+  <h2>👥 User Management</h2>
+  <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+    <thead>
+      <tr style="background-color: #f2f2f2;">
+        <th style="padding: 10px; text-align: left;">ID</th>
+        <th style="padding: 10px; text-align: left;">Username</th>
+        <th style="padding: 10px; text-align: left;">Email</th>
+        <th style="padding: 10px; text-align: center;">Status</th>
+        <th style="padding: 10px; text-align: center;">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in users %}
+        {% if user.username == 'admin' %}
+            <!-- Do nothing -->
+        {% else %}
+            <tr>
+            <td style="padding: 10px;">{{ user.id }}</td>
+            <td style="padding: 10px;">{{ user.username }}</td>
+            <td style="padding: 10px;">{{ user.email }}</td>
+            <td style="padding: 10px; text-align: center;">
+                {% if user.active %}
+                <span style="color: green;">Active</span>
+                {% else %}
+                <span style="color: red;">Inactive</span>
+                {% endif %}
+            </td>
+            <td style="padding: 10px; text-align: center;">
+                <form method="post" action="{{ url_for('admin.toggle_user_status', user_id=user.id) }}">
+                <button type="submit" style="padding: 6px 12px; background-color: {% if user.active %}#dc3545{% else %}#28a745{% endif %}; color: white; border: none; border-radius: 5px;">
+                    {% if user.active %}Deactivate{% else %}Activate{% endif %}
+                </button>
+                </form>
+            </td>
+            </tr>
+        {% endif %}
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

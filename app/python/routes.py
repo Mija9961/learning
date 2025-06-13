@@ -1,13 +1,15 @@
 from flask import render_template, jsonify, request, flash, session, redirect, url_for
 from flask_login import login_required, current_user
 from . import python_bp
-from app import db, limiter
+from app import db, limiter, chromadb_client
 from app.models import User, Conversation
 from .util.llm_response import LLMResponse
 from .util.shared_state import chat_sessions
 import asyncio, re
 from uuid import uuid4
 from flask_limiter.errors import RateLimitExceeded
+
+from .test import get_data
 
 @python_bp.route('/')
 @login_required
@@ -171,3 +173,9 @@ def ratelimit_handler(e):
     return jsonify({
         "response": e.description
     }), 200
+
+
+@python_bp.route('/test', methods=['GET'])
+def test():
+    res = get_data()
+    return res

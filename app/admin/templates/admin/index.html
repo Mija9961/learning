@@ -1,1 +1,29 @@
-<h1>This is index page</h1>
+{% extends "base.html" %}
+
+{% block title %}Home - Upskill AI{% endblock %}
+
+{% block link %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+
+{% endblock %}
+
+{% block content %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-messages">
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<div style="width: 60%;" class="container">
+  <h1>Welcome, admin</h1>
+
+</div>
+
+{% endblock %}

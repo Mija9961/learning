@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Sign Up</title>
+  <title>Login</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     * {
@@ -11,7 +11,7 @@
 
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: #eef1f5;
+      background: #f5f7fa;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -19,22 +19,22 @@
       margin: 0;
     }
 
-    .signup-container {
+    .login-container {
       background: white;
       padding: 40px;
       border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
       width: 100%;
-      max-width: 400px;
+      max-width: 360px;
     }
 
-    .signup-container h2 {
+    .login-container h2 {
       margin-bottom: 24px;
       text-align: center;
       color: #333;
     }
 
-    input[type="text"], input[type="email"], input[type="password"] {
+    input[type="text"], input[type="password"] {
       width: 100%;
       padding: 12px;
       margin-bottom: 16px;
@@ -45,7 +45,7 @@
     button {
       width: 100%;
       padding: 12px;
-      background-color: #28a745;
+      background-color: #007bff;
       color: white;
       border: none;
       border-radius: 8px;
@@ -54,39 +54,28 @@
     }
 
     button:hover {
-      background-color: #218838;
+      background-color: #0056b3;
     }
 
     .footer-text {
       text-align: center;
       margin-top: 16px;
       font-size: 14px;
-      color: #555;
-    }
-
-    .footer-text a {
-      color: #007bff;
-      text-decoration: none;
-    }
-
-    .footer-text a:hover {
-      text-decoration: underline;
+      color: #777;
     }
   </style>
 </head>
 <body>
 
-  <div class="signup-container">
-    <h2>Create Account</h2>
-    <form method="post" action="/register">
+  <div class="login-container">
+    <h2>Login</h2>
+    <form method="post" action="/login">
       <input type="text" name="username" placeholder="Username" required />
-      <input type="email" name="email" placeholder="Email" required />
       <input type="password" name="password" placeholder="Password" required />
-      <input type="password" name="confirm_password" placeholder="Confirm Password" required />
-      <button type="submit">Sign Up</button>
+      <button type="submit">Login</button>
     </form>
     <div class="footer-text">
-      Already have an account? <a href="/login">Login here</a>
+      Don't have an account? <a href="/register">Sign up</a>
     </div>
   </div>
 

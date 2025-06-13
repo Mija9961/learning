@@ -3,7 +3,7 @@ from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-
+from config import Config
 db = SQLAlchemy()
 login_manager = LoginManager()
 
@@ -15,3 +15,6 @@ def load_user(user_id):
 
 migrate = Migrate()
 limiter = Limiter(key_func=get_remote_address)
+
+
+chromadb_client = Config.get_chroma_client()

@@ -24,6 +24,9 @@ def login():
 
         if user:
             if check_password_hash(user.password, password):
+                if not user.active:
+                    flash("Your account is deactivated, please check your email or contact administrator", "danger")
+                    return render_template('auth/login.html', form=form)
                 if user.session_token:
                     flash("You are already logged in on another device.", "warning")
                     # Store pending session token in session for confirmation
@@ -32,6 +35,7 @@ def login():
                     session['user_id_pending'] = user.id
                     return redirect(url_for('auth.confirm_session'))
                 else:
+
                     # First login, generate a new session token
                     session_token = str(uuid.uuid4())
                     user.session_token = session_token
@@ -42,7 +46,8 @@ def login():
 
                     flash(f"Login successful. Welcome, {user.username}!", 'success')
                     login_user(user)
-
+                    if user.is_admin:
+                        return redirect(url_for('admin.index'))
                     return redirect(url_for('user.dashboard'))  # or 'home' if that's your route
             else:
                 flash("Invalid password.", "danger")
@@ -79,6 +84,9 @@ def logout():
 @auth_bp.route('/signup', methods=['GET', 'POST'])
 def signup():
     form = SignupForm()
+    if current_user.is_authenticated:
+        flash("You are already logged in.", "info")
+        return redirect(url_for('user.dashboard'))
     if form.validate_on_submit():
         username = form.username.data
         email = form.email.data
@@ -190,6 +198,15 @@ def confirm_session():
             # User chose to log out other sessions and proceed
             user = User.query.filter_by(id=user_id_pending).first()
             if user:
+                if not user.active:
+                    flash("Your account has been deactivated. Please contact administrator.", "danger")
+                    # Log out the user using Flask-Login
+                    logout_user()
+
+                    # Clear the Flask session (cookies)
+                    session.clear()
+                    return redirect(url_for('auth.login'))
+
                 # Overwrite previous session token to invalidate old sessions
                 user.session_token = pending_token
                 db.session.commit()

@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: chromadb
+    ports:
+      - "8010:8000"  # Exposes Chroma's HTTP API on localhost:8000
+    volumes:
+      - chroma_data:/chroma/.chroma  # Persists data
+    environment:
+      - IS_PERSISTENT=TRUE  # Optional: enables persistent storage
+
+volumes:
+  chroma_data:

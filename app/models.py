@@ -10,6 +10,9 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
     session_token = db.Column(db.String(255))
+    active = db.Column(db.Boolean, default=False, nullable=False)  # 👈 Added field
+    is_admin = db.Column(db.Boolean, default=False)  # 👈 This determines admin access
+
 
 class Conversation(db.Model, UserMixin):
     __tablename__ = 'conversations'
