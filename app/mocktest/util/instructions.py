@@ -72,6 +72,6 @@ instructions1="""You are a system that generates multiple-choice question (MCQ) 
     }
 }
 
-Provide actual answer in mock_answers, not option a, b, or c, give topic_name in small letters only, do not provide #Question Number, use such a format so that I can use json.loads directly.
+Provide actual answer in mock_answers, not option a, b, or c etc or option1 or option2 etc, give topic_name in small letters only, do not provide #Question Number, use such a format so that I can use json.loads directly.
 Generate questions randomly, if the generated question is in the history, generate a new question, try regenerating until you get 10 unique and new questions.
 """

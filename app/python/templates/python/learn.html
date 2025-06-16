@@ -19,6 +19,17 @@
 {% block title %}Python | Learn{% endblock %}
 
 {% block content %}
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-messages">
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
   <h1 class="heading">
     Professor Python
     <i 
@@ -49,10 +60,19 @@
     <input type="text" id="message" name="message" required autocomplete="off" placeholder="Type your message..." />
     <button type="submit">Send</button>
   </form>
+  <!-- <form id="chat-form" class="row gx-2 mb-3">
+    <div class="col-12 col-md-10">
+      <input type="text" id="message" name="message" class="form-control" placeholder="Type your message..." required>
+    </div>
+    <div class="col-12 col-md-2">
+      <button type="submit" class="btn btn-success w-100">Send</button>
+    </div>
+  </form> -->
+
   <hr>
   <div id="transcriptBox">🎤 <strong>Live Transcription:</strong> <em>Not active</em></div>
 
-  <div id="controls">
+  <!-- <div id="controls">
     <input type="checkbox" id="autoSendToggle" />
     <label for="autoSendToggle">Auto-send transcribed speech</label>
     <br>
@@ -62,7 +82,44 @@
     <button id="download-btn" type="button">💾 Download Chat</button>
     <button id="downloadVideoBtn" type="button">📹 Record Video</button>
     <button id="downloadScreenBtn" type="button">🖥️ Record Screen</button>
+    <button id="muteToggleBtn" type="button">🔇 Mute Avatar</button>
 
+  </div> -->
+  <div id="controls" class="container my-3">
+    <!-- <div class="mb-3">
+      <a href="{{ url_for('python.learn_select') }}" class="btn btn-outline-secondary">
+        ⬅️ Back
+      </a>
+    </div> -->
+
+    <div class="form-check mb-3">
+      <input class="form-check-input" type="checkbox" id="autoSendToggle" />
+      <label class="form-check-label" for="autoSendToggle">Auto-send transcribed speech</label>
+    </div>
+
+  <div class="row g-2">
+    <div class="col-6 col-md-4 col-lg-3">
+      <button id="startVoiceBtn" class="btn btn-outline-primary w-100">🎙 Start Voice Input</button>
+    </div>
+    <div class="col-6 col-md-4 col-lg-3">
+      <button id="chatShowHideBtn" type="button" class="btn btn-outline-secondary w-100">🙈 Hide Chat</button>
+    </div>
+    <div class="col-6 col-md-4 col-lg-3">
+      <button id="showEditorBtn" type="button" class="btn btn-outline-info w-100">🧠 Show Code Editor</button>
+    </div>
+    <div class="col-6 col-md-4 col-lg-3">
+      <button id="download-btn" type="button" class="btn btn-outline-success w-100">💾 Download Chat</button>
+    </div>
+    <div class="col-6 col-md-4 col-lg-3">
+      <button id="downloadVideoBtn" type="button" class="btn btn-outline-dark w-100">📹 Record Video</button>
+    </div>
+    <div class="col-6 col-md-4 col-lg-3">
+      <button id="downloadScreenBtn" type="button" class="btn btn-outline-dark w-100">🖥️ Record Screen</button>
+    </div>
+    <div class="col-6 col-md-4 col-lg-3">
+      <button id="muteToggleBtn" type="button" class="btn btn-outline-warning w-100">🔇 Mute Avatar Auto Speak</button>
+    </div>
+    
   </div>
 
     <!-- Modal -->
@@ -75,9 +132,6 @@
       </div>
       <div class="modal-body">
         
-        <!-- <button id="copyCodeBtn" class="btn btn-sm btn-primary mb-2">📋 Copy Code</button> -->
-        <!-- <textarea id="pythonCode" class="form-control" rows="10" placeholder="Write Python code here...">print("Hello from Pyodide!")</textarea> -->
-         <!-- <textarea id="pythonCode"></textarea> -->
           <div style="width: 100%; max-width: 100%;">
             <textarea id="pythonCode"></textarea>
           </div>

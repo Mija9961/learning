@@ -95,7 +95,7 @@ def test(topic):
     current_question_index = session.get('current_question_index', 0)
     
     # (Optional) Load remaining time if you also want to persist timer
-    remaining_time = session.get('remaining_time', 10 * 60)  # 10 minutes in seconds
+    remaining_time = session.get('remaining_time', 5 * 60)  # 5 minutes in seconds
     saved_answers = session.get('saved_answers', {})
 
     return render_template(

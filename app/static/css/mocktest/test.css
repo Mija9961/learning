@@ -1,13 +1,22 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f7fa;
+}
+
 .mocktest-container {
   position: relative;
-  max-width: 80%;
-  margin: 7px auto;
-  text-align: left;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  width: 90%;
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px 25px 80px; /* Extra space at bottom for buttons */
   background-color: #ffffff;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 #timer {
@@ -15,64 +24,69 @@
   top: 20px;
   right: 20px;
   font-weight: bold;
-  background-color: #f0f0f0;
-  padding: 5px 10px;
-  border-radius: 5px;
-  float: right;
-  font-size: 1.1em;
+  background-color: #ffe9e9;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #d93025;
   color: #d93025;
+  font-size: 1em;
 }
 
 h1 {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 30px;
   color: #1a73e8;
-  font-size: 2em;
+  font-size: 1.8em;
 }
 
 .question-block {
-  margin-top: 100px; /* to leave space for the timer */
   display: none;
+  margin-bottom: 30px;
   background-color: #f9f9f9;
   padding: 20px;
   border-left: 4px solid #1a73e8;
-  border-radius: 5px;
+  border-radius: 8px;
+  transition: all 0.3s ease-in-out;
+  min-height: 250px;
 }
 
 .question-block p {
   font-size: 1.1em;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .question-block label {
+  margin-left: 8px;
+  font-size: 1em;
   cursor: pointer;
-  margin-left: 5px;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+
+input[type="radio"] {
+  margin-right: 8px;
+  transform: scale(1.1);
 }
 
 .button-container {
-  position: fixed;
-  bottom: 20px;
-  width: 80%;
-  left: 10%;
   display: flex;
   justify-content: space-between;
-  padding: 0 50px;
-}
-
-#submitBtn {
-  margin: 0 auto;
+  gap: 12px;
+  padding-top: 30px;
+  margin-top: 30px;
 }
 
 button {
-  padding: 10px 20px;
+  flex: 1; /* Makes all buttons equal width */
+  padding: 12px;
   font-size: 16px;
-  width: 80px;
   background-color: #1a73e8;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s ease-in-out;
+  max-width: 200px;
 }
 
 button:disabled {
@@ -82,4 +96,44 @@ button:disabled {
 
 button:hover:not(:disabled) {
   background-color: #1669c1;
+}
+
+/* Responsive Adjustments */
+@media screen and (max-width: 768px) {
+  .mocktest-container {
+    padding: 15px;
+  }
+
+  #timer {
+    position: static;
+    text-align: center;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .button-container {
+    flex-direction: column;
+    align-items: stretch;
+    padding-top: 20px;
+  }
+
+  button {
+    width: 100%;
+    max-width: none;
+    margin-bottom: 10px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  h1 {
+    font-size: 1.4em;
+  }
+
+  .question-block p {
+    font-size: 1em;
+  }
+
+  .question-block label {
+    font-size: 0.95em;
+  }
 }

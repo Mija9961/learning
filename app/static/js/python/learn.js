@@ -6,16 +6,17 @@ const messageInput = document.getElementById("message");
 const transcriptBox = document.getElementById("transcriptBox");
 const autoSendToggle = document.getElementById("autoSendToggle");
 const startVoiceBtn = document.getElementById("startVoiceBtn");
+// Extract conversation_id from URL
+const urlParams = new URLSearchParams(window.location.search);
+const conversationId = urlParams.get("conversation_id");
+let avatarMuted = false;
 
-// async function startCamera() {
-//     try {
-//     const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-//     preview.srcObject = stream;
-//     } catch (err) {
-//     alert("Could not access camera/mic: " + err.message);
-//     console.error(err);
-//     }
-// }
+  document.getElementById('muteToggleBtn').addEventListener('click', function () {
+    avatarMuted = !avatarMuted;
+    this.textContent = avatarMuted ? '🔈 Unmute Avatar Auto Speak' : '🔇 Mute Avatar Auto Speak';
+       
+  });
+
 async function startCamera() {
   try {
     // Fetch video stream
@@ -96,47 +97,13 @@ form.addEventListener("submit", function(e) {
     if (msg) {
     appendMessage("user", msg);
     messageInput.value = "";
-    $.post("/python/ask/learn", { message: msg }, function(data) {
+    const url = `/python/ask/learn?conversation_id=${encodeURIComponent(conversationId)}`;
+    $.post(url, { message: msg }, function(data) {
         appendMessage("bot", data.response);
     });
     }
 });
 
-// form.addEventListener("submit", function(e) {
-//     e.preventDefault();
-//     const msg = messageInput.value.trim();
-//     if (msg) {
-//         appendMessage("user", msg);
-//         messageInput.value = "";
-        
-//         $.ajax({
-//             type: "POST",
-//             url: "/ask",
-//             data: { message: msg },
-//             success: function(data) {
-//                 appendMessage("bot", data.response);
-//             },
-//             error: function(xhr) {
-//                 if (xhr.status === 429) {
-//                     // Server responded with 429 Too Many Requests
-//                     let errorMessage = "⛔ Too many requests. Please wait before trying again.";
-//                     try {
-//                         let json = JSON.parse(xhr.responseText);
-//                         if (json.message) {
-//                             errorMessage = json.message;
-//                         }
-//                     } catch (e) {
-//                         // Not JSON, fallback to default
-//                     }
-//                     // Show popup alert
-//                     alert(errorMessage);
-//                 } else {
-//                     alert("An error occurred while processing your request.");
-//                 }
-//             }
-//         });
-//     }
-// });
 
 
 function appendMessage(sender, text) {
@@ -258,7 +225,8 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
         // Send final transcript if auto-send is enabled
         if (autoSendToggle.checked && finalTranscript.trim()) {
             appendMessage("user", finalTranscript.trim());
-            $.post("/python/ask/learn", { message: finalTranscript.trim() }, function(data) {
+            const url = `/python/ask/learn?conversation_id=${encodeURIComponent(conversationId)}`;
+            $.post(url, { message: finalTranscript.trim() }, function(data) {
                 appendMessage("bot", data.response);
             });
             finalTranscript = '';  // reset for next session
@@ -281,142 +249,6 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
     startVoiceBtn.disabled = true;
 }
 
-// let recognition;
-// let isRecognizing = false;
-
-// if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-//     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-//     recognition = new SpeechRecognition();
-//     recognition.continuous = true;
-//     recognition.interimResults = true;
-//     recognition.lang = 'en-US';
-//     let isMobile_detected = /Mobi|Android/i.test(navigator.userAgent);
-
-//     let finalTranscript = '';
-
-//     recognition.onresult = (event) => {
-//     let interimTranscript = '';
-//     if(isMobile_detected){
-//         finalTranscript = '';
-//     }
-//     for (let i = event.resultIndex; i < event.results.length; ++i) {
-//         const transcript = event.results[i][0].transcript;
-//         if (event.results[i].isFinal) {
-//             finalTranscript += transcript;
-//         } else {
-//         interimTranscript += transcript;
-//         }
-//     }
-//     transcriptBox.innerHTML = `🎤 <strong>Live Transcription:</strong> <em>${finalTranscript} ${interimTranscript}</em>`;
-//     if (autoSendToggle.checked && finalTranscript .trim()) {
-//         appendMessage("user", finalTranscript );
-//         $.post("/ask", { message: finalTranscript }, function(data) {
-//         appendMessage("bot", data.response);
-//         });
-//         finalTranscript = '';
-//     }
-//     };
-
-//     recognition.onerror = (e) => {
-//     console.error("Speech Recognition Error:", e.error);
-//     };
-
-//     recognition.onend = () => {
-//     isRecognizing = false;
-//     startVoiceBtn.textContent = "🎙 Start Voice Input";
-//     transcriptBox.innerHTML += " (Stopped)";
-//     };
-
-//     startVoiceBtn.onclick = () => {
-//     if (isRecognizing) {
-//         recognition.stop();
-//     } else {
-//         finalTranscript = '';
-//         recognition.start();
-//         isRecognizing = true;
-//         transcriptBox.innerHTML = "🎤 <strong>Live Transcription:</strong> <em>Listening...</em>";
-//         startVoiceBtn.textContent = "⏹ Stop Voice Input";
-//     }
-//     };
-// } else {
-//     transcriptBox.innerHTML = "🎤 Speech recognition not supported in this browser.";
-//     startVoiceBtn.disabled = true;
-// }
-
-
-// === Speech Recognition Setup ===
-// let recognition;
-// let isRecognizing = false;
-// let finalTranscript = '';
-
-// if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-//     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-//     recognition = new SpeechRecognition();
-//     recognition.continuous = true;
-//     recognition.interimResults = true;
-//     recognition.lang = 'en-US';
-
-//     recognition.onresult = (event) => {
-//         let interimTranscript = '';
-//         finalTranscript = '';
-//         for (let i = event.resultIndex; i < event.results.length; ++i) {
-//             const transcript = event.results[i][0].transcript;
-//             if (event.results[i].isFinal) {
-//                 finalTranscript += transcript + ' ';
-//             } else {
-//                 interimTranscript += transcript;
-//             }
-//         }
-
-//         // Update transcript display
-//         const transcriptBox = document.getElementById('transcriptBox');
-//         transcriptBox.innerHTML = `🎤 <strong>Live Transcription:</strong> <em>${finalTranscript} ${interimTranscript}</em>`;
-
-//         // Auto-send feature
-//         const autoSendToggle = document.getElementById('autoSendToggle');
-//         if (autoSendToggle.checked && finalTranscript.trim()) {
-//             appendMessage("user", finalTranscript.trim());
-//             $.post("/ask", { message: finalTranscript.trim() }, function(data) {
-//                 appendMessage("bot", data.response);
-//             });
-//             finalTranscript = '';
-//         }
-//     };
-
-//     recognition.onerror = (e) => {
-//         console.error("Speech Recognition Error:", e.error);
-//         const transcriptBox = document.getElementById('transcriptBox');
-//         transcriptBox.innerHTML += ` <span style="color:red;">(Error: ${e.error})</span>`;
-//     };
-
-//     recognition.onend = () => {
-//         isRecognizing = false;
-//         document.getElementById('startVoiceBtn').textContent = "🎙 Start Voice Input";
-//         const transcriptBox = document.getElementById('transcriptBox');
-//         transcriptBox.innerHTML += " (Stopped)";
-//     };
-
-//     document.getElementById('startVoiceBtn').addEventListener('click', () => {
-//         const transcriptBox = document.getElementById('transcriptBox');
-//         if (isRecognizing) {
-//             recognition.stop();
-//         } else {
-//             finalTranscript = '';
-//             recognition.start();
-//             isRecognizing = true;
-//             transcriptBox.innerHTML = "🎤 <strong>Live Transcription:</strong> <em>Listening...</em>";
-//             document.getElementById('startVoiceBtn').textContent = "⏹ Stop Voice Input";
-//         }
-//     });
-// } else {
-//     const transcriptBox = document.getElementById('transcriptBox');
-//     transcriptBox.innerHTML = "🎤 Speech recognition not supported in this browser.";
-//     document.getElementById('startVoiceBtn').disabled = true;
-// }
-
-
-
-
 
 
 
@@ -424,6 +256,8 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
 
 // Add this to make the avatar "speak" by animating it and optionally playing speech
 function speakAvatar(text) {
+    if (avatarMuted) return;
+
     const avatar = document.getElementById("avatar");
     avatar.classList.add("speaking");
 

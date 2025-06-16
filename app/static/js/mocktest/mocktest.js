@@ -1,13 +1,13 @@
 document.addEventListener("DOMContentLoaded", function() {
-    // Use the remaining time from server or default 10 mins
-    let timeLeft = typeof remainingTimeFromServer !== 'undefined' ? remainingTimeFromServer : 10 * 60; // seconds
+    // Use the remaining time from server or default 5 mins
+    let timeLeft = typeof remainingTimeFromServer !== 'undefined' ? remainingTimeFromServer : 5 * 60; // seconds
 
     const timerDisplay = document.getElementById("timer");
 
     const timerInterval = setInterval(function() {
         let minutes = Math.floor(timeLeft / 60);
         let seconds = timeLeft % 60;
-        timerDisplay.textContent = `Time Left: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        timerDisplay.textContent = `Time Left: ${minutes}:${seconds < 5 ? '0' : ''}${seconds}`;
 
         if (timeLeft <= 0) {
             clearInterval(timerInterval);
@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     current_question_index: 0,
-                    remaining_time: 10 * 60,
+                    remaining_time: 5 * 60,
                     answers: {}
                 })
             });
