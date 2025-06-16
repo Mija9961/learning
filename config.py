@@ -1,6 +1,5 @@
 import os
 from dotenv import load_dotenv
-import chromadb
 
 load_dotenv()
 
@@ -19,14 +18,4 @@ class Config:
     RATELIMIT_STORAGE_URL = "redis://localhost:6379"
     RATELIMIT_HEADERS_ENABLED = True
 
-    # ChromaDB
-    CHROMADB_HOST = os.environ.get("CHROMADB_HOST", "localhost")
-    CHROMADB_PORT = int(os.environ.get("CHROMADB_PORT", 8000))
-    CHROMADB_COLLECTION = os.environ.get("CHROMADB_COLLECTION", "default_memory")
 
-    @staticmethod
-    def get_chroma_client():
-        return chromadb.HttpClient(
-            host=Config.CHROMADB_HOST,
-            port=Config.CHROMADB_PORT
-        )

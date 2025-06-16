@@ -1,5 +1,5 @@
 from flask import Flask, render_template
-from .extensions import db, login_manager, migrate, limiter, chromadb_client
+from .extensions import db, login_manager, migrate, limiter
 from .util.hooks import check_session_validity
 
 
