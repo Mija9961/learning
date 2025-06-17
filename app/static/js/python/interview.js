@@ -573,3 +573,14 @@ document.getElementById("copyCodeBtn").addEventListener("click", function () {
     alert("Copy failed. Please try manually.");
     });
 });
+
+let tabChangeCount = 0;
+
+document.addEventListener("visibilitychange", function () {
+if (document.hidden) {
+    tabChangeCount++;
+
+    // Show popup warning
+    alert(`⚠️ Warning! You have changed window ${tabChangeCount} time${tabChangeCount > 1 ? 's' : ''}! Do not change window at the time of interview.`);
+}
+});

@@ -153,6 +153,21 @@
 
 {% block script %}
   <script src="{{ url_for('static', filename='js/python/interview.js') }}"></script>
-   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // let tabChangeCount = 0;
 
+    // document.addEventListener("visibilitychange", function () {
+    //   if (document.hidden) {
+    //     tabChangeCount++;
+    //     const sound = document.getElementById("alertSound");
+    //     sound.play().then(() => {
+    //       alert(`⚠️ You have changed the window ${tabChangeCount} time${tabChangeCount > 1 ? 's' : ''}!`);
+    //     }).catch((err) => {
+    //       // In case audio autoplay is blocked, still show alert
+    //       alert(`⚠️ You have changed the window ${tabChangeCount} time${tabChangeCount > 1 ? 's' : ''}!`);
+    //     });
+    //   }
+    // });
+  </script>
 {% endblock %}
