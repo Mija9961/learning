@@ -9,7 +9,7 @@ import asyncio, re
 from uuid import uuid4
 from flask_limiter.errors import RateLimitExceeded
 
-from .test import get_data
+from ..util.chromadb import get_data
 from .util.validity_check import is_valid_uuid
 
 @python_bp.route('/')

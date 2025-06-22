@@ -77,3 +77,32 @@ my_flask_app/
 flask db init
 flask db migrate
 flask db upgrade
+
+
+# Project Name
+
+## Table of Contents
+- [Installation](#installation)
+- [Usage](#usage)
+- [Configuration](#configuration)
+- [Examples](#examples)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Installation
+Instructions for installation...
+
+## Usage
+Instructions for usage...
+
+## Configuration
+Details about configuration...
+
+## Examples
+Code examples, screenshots, or output...
+
+## Contributing
+Guidelines for contributions...
+
+## License
+Information about the license...

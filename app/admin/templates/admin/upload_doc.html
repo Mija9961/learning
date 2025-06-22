@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PDF Q/A Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 30px;
+            max-width: 600px;
+            margin: auto;
+        }
+        h2 {
+            text-align: center;
+        }
+        form {
+            margin-bottom: 30px;
+        }
+        .results {
+            margin-top: 20px;
+        }
+        .result {
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+        input[type="text"], input[type="file"] {
+            width: 80%;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 8px 15px;
+            cursor: pointer;
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Upload a PDF and Ask Questions</h2>
+
+    <!-- Upload PDF Form -->
+    <form method="POST" enctype="multipart/form-data">
+        <label>Upload PDF:</label><br/>
+        <input type="file" name="pdf_file" accept="application/pdf" required><br/>
+        <div class="btn-group">
+            <button type="submit">Upload</button>
+        </div>
+    </form>
+
+    <hr>
+    <form method="POST" enctype="multipart/form-data">
+        <div class="btn-group">
+            <button type="submit" name="reset" value="1" style="background: #ff5555; color: #fff;">
+                Reset All Documents
+            </button>
+        </div>
+    </form>
+
+    <hr/>
+
+    <!-- Ask Question Form -->
+    <form method="POST">
+        <label>Enter your query:</label><br/>
+        <input type="text" name="query" required/>
+        <button type="submit">Search</button>
+    </form>
+
+    <!-- Results Section -->
+{% if results %}
+<div class="results">
+    <h3>Results:</h3>
+    {% for result in results %}
+        <div class="result">{{ result }}</div>
+    {% endfor %}
+
+    {% if formatted_answer %}
+    <div class="results">
+        <h3>Formatted Answer:</h3>
+        <div class="result" style="background: #e8f7ff; border:1px solid #9dd5ff;">
+            {{ formatted_answer }}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+
+
+</body>
+</html>
