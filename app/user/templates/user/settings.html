@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}User Settings{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-body">
+            <h2 class="card-title mb-4">Model Settings</h2>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            {% if selected_provider and selected_model %}
+            <div class="mb-3">
+                <p><strong>Current Provider:</strong> {{ selected_provider }}</p>
+                <p><strong>Current Model:</strong> {{ selected_model }}</p>
+            </div>
+            {% endif %}
+
+            <form method="POST">
+                <div class="mb-3">
+                    <label for="provider" class="form-label">Select Model Provider</label>
+                    <select class="form-select" name="provider" id="provider" required>
+                        <option disabled selected>-- Choose Provider --</option>
+                        {% for provider in model_registry %}
+                            <option value="{{ provider }}" {% if selected_provider == provider %}selected{% endif %}>
+                                {{ provider }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3" id="model-section" {% if not selected_provider %}style="display:none;"{% endif %}>
+                    <label for="model" class="form-label">Select Model</label>
+                    <select class="form-select" name="model" id="model" required>
+                        {% if selected_provider %}
+                            {% for model in model_registry[selected_provider] %}
+                                <option value="{{ model }}" {% if selected_model == model %}selected{% endif %}>{{ model }}</option>
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save Settings</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const providerSelect = document.getElementById('provider');
+        const modelSelect = document.getElementById('model');
+        const modelSection = document.getElementById('model-section');
+
+        providerSelect.addEventListener('change', function () {
+            const provider = this.value;
+            if (!provider) return;
+
+            fetch(`/user/get-models/${provider}`)
+                .then(response => response.json())
+                .then(models => {
+                    modelSelect.innerHTML = '';
+                    models.forEach(model => {
+                        const option = document.createElement('option');
+                        option.value = model;
+                        option.textContent = model;
+                        modelSelect.appendChild(option);
+                    });
+                    modelSection.style.display = 'block';
+                });
+        });
+    });
+</script>
+{% endblock %}

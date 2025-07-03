@@ -2,7 +2,7 @@ from flask import render_template, jsonify, request, flash, session, redirect, u
 from flask_login import login_required, current_user
 from . import python_bp
 from app import db, limiter
-from app.models import User, Conversation
+from app.models import User, Conversation, AIModel, UserAIModel
 from .util.llm_response import LLMResponse
 from .util.shared_state import chat_sessions
 import asyncio, re
@@ -257,6 +257,14 @@ def learn_select():
             ).order_by(Conversation.timestamp.asc()).all()
         else:
             conversations = []
+
+
+        # Set AI model
+        user_model = UserAIModel.query.filter_by(user_email=current_user.email).first()
+        selected_provider = user_model.provider if user_model else os.environ.get("DEFAULT_AI_PROVIDER", None)
+        selected_model = user_model.model_name if user_model else os.environ.get("DEFAULT_AI_MODEL", None)
+        session['ai_provider'] = selected_provider.lower()
+        session['ai_model'] = selected_model.lower()
 
     except Exception as e:
         flash(f"Error loading conversations: {e}", "danger")

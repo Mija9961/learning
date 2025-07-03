@@ -37,3 +37,19 @@ class MockTestData(db.Model, UserMixin):
 
     def __repr__(self):
         return f"<MockTestData(id={self.id}, question_set_no={self.question_set_no}, subject={self.subject})>"
+    
+
+class UserAIModel(db.Model, UserMixin):
+    __tablename__ = 'users_ai_model'
+    id = db.Column(db.Integer, primary_key=True)
+    user_email = db.Column(db.String(100), unique=True, nullable=False)
+    provider = db.Column(db.String(50), nullable=False)
+    model_name = db.Column(db.String(100), nullable=False)
+
+
+
+class AIModel(db.Model, UserMixin):
+    __tablename__ = 'ai_models'
+    id = db.Column(db.Integer, primary_key=True)
+    provider = db.Column(db.String(50), nullable=False)
+    model_name = db.Column(db.String(100), nullable=False)
