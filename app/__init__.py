@@ -23,6 +23,7 @@ def create_app():
     from .python import python_bp  # local import avoids circular dependency
     from .mocktest import mocktest_bp  # local import avoids circular dependency
     from .autogen import autogen_bp
+    from .chat import chat_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(admin_bp, url_prefix='/admin')
@@ -30,6 +31,7 @@ def create_app():
     app.register_blueprint(python_bp, url_prefix='/python')
     app.register_blueprint(mocktest_bp, url_prefix='/mocktest')
     app.register_blueprint(autogen_bp, url_prefix='/autogen')
+    app.register_blueprint(chat_bp, url_prefix='/chat')
 
     with app.app_context():
         db.create_all()

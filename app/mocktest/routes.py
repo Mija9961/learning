@@ -3,7 +3,6 @@ from flask_login import login_required, current_user
 from . import mocktest_bp
 from app import db, limiter
 from .util.llm_response import LLMResponse
-import asyncio, json
 from .util.shared_state import mock_questions, mock_answers
 from datetime import datetime
 

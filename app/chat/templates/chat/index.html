@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block link %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/python/index.css') }}">
+
+{% endblock %}
+
+
+{% block title %}Welcome - poroOsekho Learning Hub{% endblock %}
+
+{% block content %}
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-messages">
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <div class="container text-center mt-5">
+    <h1 class="display-4 mb-4">Welcome to poro O sekho Learning Hub!</h1>
+    <p class="lead">
+      This platform is designed to help you master Python,DSA,AI/ML — whether you're learning new concepts or preparing for technical interviews.
+    </p>
+    <hr>
+    <h4 class="display-4 mb-4">Python</h4>
+    <div class="row mt-5">
+      <div class="col-md-6">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <h3 class="card-title">🧑‍🎓 Learn Python</h3>
+            <p class="card-text">
+              Dive into tutorials, challenges, and interactive lessons to build your Python skills from beginner to advanced.
+            </p>
+            <a href="{{ url_for('python.learn_select') }}" 
+               class="btn btn-primary {% if request.path == url_for('python.learn_select') %}active{% endif %}">
+              Start Learning
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <h3 class="card-title">💼 Python Interview Practice</h3>
+            <p class="card-text">
+              Test your Python knowledge with mock interview questions, get instant feedback, and improve your confidence.
+            </p>
+            <a href="{{ url_for('python.interview_select') }}" 
+               class="btn btn-success {% if request.path == url_for('python.interview_select') %}active{% endif %}">
+              Start Interview Practice
+            </a>
+          </div>
+        </div>
+      </div>
+      <p></p>
+      <hr>
+      <!-- DSA (Data Structures & Algorithms) -->
+
+      <!-- <h4 class="display-4 mb-4">DSA</h4>
+      <div class="col-md-6 mb-4">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <h3 class="card-title">🧑‍🎓 Master DSA</h3>
+            <p class="card-text">
+              Learn essential Data Structures and Algorithms concepts — from arrays and linked lists to graphs and dynamic programming — and ace technical interviews with confidence.
+            </p>
+            <a href="{{ url_for('python.learn') }}" 
+              class="btn btn-primary {% if request.path == url_for('python.learn') %}active{% endif %}">
+              Start Learning
+            </a>
+          </div>
+        </div>
+      </div> -->
+      <!-- DSA Interview Practice -->
+      <!-- <div class="col-md-6 mb-4">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <h3 class="card-title">💼 DSA Interview Practice</h3>
+            <p class="card-text">
+              Sharpen your Data Structures and Algorithms skills with interview-focused practice sets, coding challenges, and expert tips to ace technical interviews.
+            </p>
+            <a href="{{ url_for('python.interview') }}" 
+              class="btn btn-success {% if request.path == url_for('python.interview') %}active{% endif %}">
+              Start Interview Practice
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <p></p>
+      <hr> -->
+      <!-- AUTOGEN -->
+
+      <!-- <h4 class="display-4 mb-4">AUTOGEN</h4>
+      <div class="col-md-6 mb-4">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <h3 class="card-title">🧑‍🎓 Learn Autogen</h3>
+            <p class="card-text">
+              Learn essential AutoGen concepts — from building agents and orchestrating tasks to integrating APIs and error handling — and build powerful, real-world LLM-based systems with confidence.            </p>
+            <a href="{{ url_for('autogen.learn') }}" 
+              class="btn btn-primary {% if request.path == url_for('autogen.learn') %}active{% endif %}">
+              Start Learning
+            </a>
+          </div>
+        </div>
+      </div> -->
+      <!-- DSA Interview Practice -->
+      <!-- <div class="col-md-6 mb-4">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <h3 class="card-title">💼 Autogen Interview Practice</h3>
+            <p class="card-text">
+              Sharpen your AutoGen skills with interview-focused practice sets, scenario-based challenges, and expert insights to ace real-world LLM system development and impress in technical interviews.            </p>
+            <a href="{{ url_for('autogen.interview') }}" 
+              class="btn btn-success {% if request.path == url_for('autogen.interview') %}active{% endif %}">
+              Start Interview Practice
+            </a>
+          </div>
+        </div>
+      </div>-->
+
+
+    </div>
+  </div>
+{% endblock %}

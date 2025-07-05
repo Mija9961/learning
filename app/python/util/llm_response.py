@@ -46,10 +46,34 @@ class LLMResponse:
             system_message=system_messages_interview,
         ), safe_name
 
-    async def get_response(message):
+    async def get_response_interview(message):
         """Generate a response asynchronously using the professor (AssistantAgent)."""
         session_id = LLMResponse.get_session_id()
 
+        if 'ai_model' in session and 'ai_provider' in session and session['ai_provider'].lower() != 'openai':
+            # Fetch all previous chat history for the session
+            chat_history = chat_sessions.get(session_id, [])
+
+            conversation_history = []# [f"User: {entry['user']}\nBot: {entry['bot']}" for entry in chat_history]
+            for entry in chat_history:
+                human_messsage = HumanMessage(content=entry['user'])
+                ai_messsage = AIMessage(content=entry['bot'])
+                conversation_history.append(human_messsage)
+                conversation_history.append(ai_messsage)
+
+            human_messsage = HumanMessage(content=message)
+
+            conversation_history.append(human_messsage)
+
+            last_response = LLMResponseLangGraph.get_response(
+                ai_provider=session['ai_provider'],
+                ai_model= session['ai_model'],
+                message = conversation_history,
+                request_type = "interview"
+            )
+
+            return last_response.content or "Sorry, I couldn't generate a response."
+        
         professor, professor_name = LLMResponse.get_professor_interview(session_id)
         
         # Fetch all previous chat history for the session

@@ -46,7 +46,7 @@
             <div class="text-danger">{{ error }}</div>
           {% endfor %}
 
-          {{ form.submit(class_="btn btn-primary", value="Sign Up") }}
+          {{ form.submit(class_="btn-signup btn-primary", value="Sign Up") }}
         </form>
         <div class="footer-text">
           Already have an account? <a href="{{ url_for('auth.login') }}">Login here</a>
