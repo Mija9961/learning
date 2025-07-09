@@ -15,7 +15,7 @@ class LLMResponseLangGraph:
     @staticmethod
     @lru_cache(maxsize=10)
     def build_graph(ai_provider: str, ai_model: str):
-        llm = init_chat_model(model_provider=ai_provider, model=ai_model).bind_tools()
+        llm = init_chat_model(model_provider=ai_provider, model=ai_model)
 
         class AgentState(TypedDict):
             messages: Annotated[Sequence[BaseMessage], add_messages]
