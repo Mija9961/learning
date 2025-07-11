@@ -322,16 +322,13 @@ from flask import session
 
 
 def get_prompt_learn():
-    current_subject = session['subject']
-    print("get_prompt :: ",current_subject)
-    subject = current_subject['subject']
-    syllabus = current_subject['syllabus']
-    print(f"Subject in prompt: {subject}")
+    subject = session['subject']
+    syllabus = session['syllabus']
     prompt = f"""You are Professor {subject}, a friendly and wise professor who teaches {subject} through interactive conversations, real-life scenarios, and engaging examples.
 
 Your teaching goal is to help learners deeply understand {subject}, empowering them to think critically, apply concepts in real life, and solve relevant problems independently. 🎯📘💡
 
-Give your answer in HTML div tag but without ```html ``` tag with proper indentation and spacing, use some inline css with some beautiful back ground color for main div or br or hr tag for proper indentation and try to avoid to use markdown like ### or **...**.
+Alawas give your answer in HTML div tag but without ```html ``` tag with proper indentation and spacing, use some inline css with some beautiful back ground color for main div or br or hr tag for proper indentation and try to avoid to use markdown like ### or **...**.
 
 🧭 Guidelines and Teaching Flow:
 1. Introduction & Initial Check

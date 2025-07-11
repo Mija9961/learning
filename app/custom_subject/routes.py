@@ -2,7 +2,7 @@ from flask import render_template, jsonify, request, flash, session, redirect, u
 from flask_login import login_required, current_user
 from . import custom_subject_bp
 from app import db, limiter
-from app.models import User, Conversation, AIModel, UserAIModel
+from app.models import User, Conversation, AIModel, UserAIModel, Subject
 from .util.llm_response import LLMResponse
 from .util.shared_state import chat_sessions, subjects_storage, current_subject_dict
 import asyncio, re, os
@@ -19,18 +19,41 @@ from .util.validity_check import is_valid_uuid
 @login_required
 def index():
     # Handle form submission
-    if request.method == "POST":
-        subject = request.form.get("subject")
-        syllabus = request.form.get("syllabus")
-        if subject:
-            added_at = datetime.now(timezone.utc)
-            subject_id = str(uuid4())
-            subjects_storage.append({"subject_id": subject_id, "subject": subject, "syllabus": syllabus, "added_at": added_at})
-            flash("Subject added successfully!", "success")
-        else:
-            flash("Subject is required.", "danger")
-        return redirect(url_for("custom_subject.index"))
+    if 'username' not in session:
+        flash('Please log in first.', 'warning')
+        return redirect(url_for('auth.login'))
+    try:
+        # Fetch user email from User model
+        subjects_storage = None
+        user = User.query.filter_by(username=session['username']).first()
+        if not user:
+            flash('User not found.', 'danger')
+            return redirect(url_for('auth.login'))
 
+        user_email = user.email
+        if request.method == "POST":
+            subject = request.form.get("subject")
+            syllabus = request.form.get("syllabus")
+            if subject:
+                subject_id = str(uuid4())
+                # Create new subject and save to database
+                new_subject = Subject(subject=subject, subject_id=subject_id, syllabus=syllabus, user_email=user_email)
+                db.session.add(new_subject)
+                db.session.commit()
+                flash("Subject added successfully!", "success")
+            else:
+                flash("Subject is required.", "danger")
+            return redirect(url_for("custom_subject.index"))
+        subjects_storage = (
+                Subject.query
+                .filter_by(user_email=user_email)
+                .order_by(Subject.added_at.asc())
+                .all()
+            )
+    except Exception as e:
+        print(f"Error in custom_subjec.index, {e}")
+        flash("Something went wrong try again. If face the issue again contact administrator","danger")
+    
     # Example conversation summaries
     return render_template("custom_subject/index.html",
                            user=current_user,
@@ -40,18 +63,12 @@ def index():
 
 @custom_subject_bp.route('/<subject>/<subject_id>')
 def subject(subject,subject_id):
-    current_subject_dict = None
-    print("Subjects: ", subjects_storage)
-
-    for s in subjects_storage:
-        if s.get('subject_id') == subject_id:
-            current_subject_dict = s
-            print("Subject: ", subject)
-            break
-
-    if current_subject_dict is None:
+    subject_obj = Subject.query.filter_by(subject_id=subject_id).first()
+    if not subject_obj:
         flash("Subject not found with the given ID.", "danger")
         return redirect(url_for('custom_subject.index'))
+    
+    subject = subject_obj.subject
 
     return render_template("custom_subject/subject.html",
                            subject=subject, subject_id=subject_id)
@@ -80,29 +97,29 @@ def subject_learn_select(subject, subject_id):
 
     try:
         subject = None
-        print("Subjects: ", subjects_storage)
-
-        for s in subjects_storage:
-            if s.get('subject_id') == subject_id:
-                session['subject'] = s
-                subject = s['subject']
-                print("Subject: ", subject)
-                break
-
+        subject_obj = Subject.query.filter_by(subject_id=subject_id).first()
+        if not subject_obj:
+            flash("Subject not found with the given ID.", "danger")
+            return redirect(url_for('custom_subject.index'))
+    
+        subject = subject_obj.subject
+        session['subject'] = subject
+        session['subject_id'] = subject_id
+        session['syllabus'] = subject_obj.syllabus
         if subject is None:
             flash("Subject not found with the given ID.", "danger")
             return redirect(url_for('custom_subject.index'))
         # Fetch grouped conversations (distinct conversation_ids)
+        
         all_conversations = (
             db.session.query(Conversation.conversation_id, Conversation.conversation_name, db.func.min(Conversation.timestamp))
-            .filter_by(user_email=user_email, conversation_type='learn', subject=subject)
+            .filter_by(user_email=user_email, conversation_type='learn', subject=subject, subject_id=subject_id)
             .group_by(Conversation.conversation_id)
             .order_by(db.func.min(Conversation.timestamp).desc())
             .all()
         )
-
         conversation_summaries = [(conv_id, conv_name, ts) for conv_id, conv_name, ts in all_conversations]
-
+        print(f"Conversation summary::{conversation_summaries}")
         # Get conversation history for selected conversation_id or start new
         if selected_conversation_id:
             conversations = Conversation.query.filter_by(
@@ -206,14 +223,14 @@ def learn(subject_id):
 
     try:
         subject = None
-        print("Subjects: ", subjects_storage)
-
-        for s in subjects_storage:
-            if s.get('subject_id') == subject_id:
-                subject = s['subject']
-                print("Subject: ", subject)
-                break
-        if subject == None:
+        subject_obj = Subject.query.filter_by(subject_id=subject_id).first()
+        if not subject_obj:
+            flash("Subject not found with the given ID.", "danger")
+            return redirect(url_for('custom_subject.index'))
+    
+        subject = subject_obj.subject
+        
+        if subject is None:
             flash("Subject not found with the given ID.", "danger")
             return redirect(url_for('custom_subject.index'))
         # Fetch user email from User model
@@ -307,18 +324,18 @@ def ask_learn():
 
     try:
         response = asyncio.run(LLMResponse.get_response_learn(user_input))
+        print(f"Response:: {response}")
         response = re.sub(r"^```html\n?|```$", "", response).strip() # Remove code block
         response = f"<div>{response}</div>"
 
-        subject_dict = session['subject']
-        subject = subject_dict['subject']
         new_convo = Conversation(
             user_email=user_email,
             user_message=user_input,
             bot_response=response,
             conversation_id=conversation_id,
             conversation_type='learn',
-            subject=subject
+            subject=session['subject'],
+            subject_id=session['subject_id']
         )
         db.session.add(new_convo)
         db.session.commit()
@@ -378,18 +395,17 @@ def learn_select(subject_id):
         return redirect(url_for('auth.login'))
 
     user_email = user.email
-    selected_conversation_id = "Test" #request.args.get('conversation_id')
+    selected_conversation_id = request.args.get('conversation_id')
 
     try:
         subject = None
-        print("Subjects: ", subjects_storage)
-
-        for s in subjects_storage:
-            if s.get('subject_id') == subject_id:
-                subject = s['subject']
-                print("Subject: ", subject)
-                break
-
+        subject_obj = Subject.query.filter_by(subject_id=subject_id).first()
+        if not subject_obj:
+            flash("Subject not found with the given ID.", "danger")
+            return redirect(url_for('custom_subject.index'))
+    
+        subject = subject_obj.subject
+        
         if subject is None:
             flash("Subject not found with the given ID.", "danger")
             return redirect(url_for('custom_subject.index'))

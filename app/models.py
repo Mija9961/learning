@@ -24,6 +24,7 @@ class Conversation(db.Model, UserMixin):
     conversation_name = db.Column(db.String(255))
     conversation_type = db.Column(db.String(255))
     subject = db.Column(db.String(100), nullable=False)
+    subject_id = db.Column(db.String(255))
     timestamp = db.Column(db.DateTime, server_default=db.func.now())
 
 
@@ -53,3 +54,13 @@ class AIModel(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     provider = db.Column(db.String(50), nullable=False)
     model_name = db.Column(db.String(100), nullable=False)
+
+
+class Subject(db.Model, UserMixin):
+    __tablename__ = 'subject'
+    id = db.Column(db.Integer, primary_key=True)
+    subject = db.Column(db.String(50), nullable=False)
+    subject_id = db.Column(db.String(50), unique=True, nullable=False)
+    syllabus = db.Column(db.Text, nullable=False)
+    added_at = db.Column(db.DateTime, server_default=db.func.now())
+    user_email = db.Column(db.String(100), nullable=False)
