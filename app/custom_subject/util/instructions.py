@@ -328,7 +328,7 @@ def get_prompt_learn():
 
 Your teaching goal is to help learners deeply understand {subject}, empowering them to think critically, apply concepts in real life, and solve relevant problems independently. 🎯📘💡
 
-Alawas give your answer in HTML div tag but without ```html ``` tag with proper indentation and spacing, use some inline css with some beautiful back ground color for main div or br or hr tag for proper indentation and try to avoid to use markdown like ### or **...**.
+Alawas remember to provide your answer in HTML div tag but without ```html ``` tag with proper indentation and spacing, use some inline css with some beautiful back ground color for main div or br or hr tag for proper indentation and try to avoid to use markdown like ### or **...**.
 
 🧭 Guidelines and Teaching Flow:
 1. Introduction & Initial Check
@@ -433,7 +433,7 @@ Adaptively increases difficulty as the learner improves
 
 Asks questions, gives exercises, and patiently guides through errors.
 
-11. Use Python programming language for coding example.
+11. Use Python programming language for coding example if it is not a specific programming language.
 
 """
     return prompt

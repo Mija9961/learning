@@ -173,7 +173,7 @@ form button:hover {
 .chat-toggle-btn {
       position: fixed;
       bottom: 24px;
-      right: 24px;
+      right: 10px;
       background-color: #0955f7;
       border-radius: 50%;
       width: 56px;
@@ -192,9 +192,9 @@ form button:hover {
 
     .chat-box-global {
       position: fixed;
-      bottom: 90px;
-      right: 24px;
-      width: 320px;
+      bottom: 24px;
+      right: 10px;
+      /* width: 320px; */
       background: white;
       border-radius: 10px;
       display: none;
@@ -209,12 +209,12 @@ form button:hover {
     }
 
     .chat-body-global {
-      max-height: 300px;
+      max-height: 500px;
       overflow-y: auto;
     }
 
     .chat-message {
-      max-width: 80%;
+      max-width: 90%;
       word-wrap: break-word;
     }
 
