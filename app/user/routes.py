@@ -1,23 +1,22 @@
-from flask import render_template, jsonify, request, flash, session, redirect, url_for
+from flask import render_template, jsonify, request, flash, session, redirect, url_for, current_app
 from flask_login import login_required, current_user
 from . import user_bp
 from app import db, limiter
 from app.models import User, AIModel, UserAIModel
 from dotenv import load_dotenv
 import os
+from werkzeug.utils import secure_filename
+
+
 
 load_dotenv()
+
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 @user_bp.route('/dashboard')
 @login_required
 def dashboard():
     return render_template('user/dashboard.html', user=current_user)
-
-@user_bp.route('/profile')
-@login_required
-def profile():
-    return render_template('user/profile.html', user=current_user)
-
 
 
 # Model provider to models mapping
@@ -97,7 +96,8 @@ def settings():
         'user/settings.html',
         selected_provider=selected_provider,
         selected_model=selected_model,
-        model_registry=model_registry
+        model_registry=model_registry,
+        user=current_user
     )
 
 @user_bp.route('/get-models/<provider>')
@@ -105,3 +105,39 @@ def settings():
 def get_models(provider):
     models = [m.model_name for m in AIModel.query.filter_by(provider=provider).all()]
     return jsonify(models)
+
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@user_bp.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+    if request.method == 'POST':
+        image = request.files.get('image')
+        if image and allowed_file(image.filename):
+            filename = secure_filename(image.filename)
+            # Optionally prepend with user ID or timestamp
+            filename = f"{current_user.email}_{filename}"
+
+            image_folder = os.path.join(current_app.static_folder, 'images', 'uploads')
+
+            # image_folder = os.environ.get('UPLOAD_FOLDER', 'static/images/uploads')
+
+            os.makedirs(image_folder, exist_ok=True)
+            image_path = os.path.join(image_folder, filename)
+            image.save(image_path)
+
+            print("Image path::",image_path)
+            # Save relative path to database
+            user = User.query.filter_by(email=current_user.email).first()
+            user.profile_image = filename
+            db.session.commit()
+
+            flash("Profile image updated!", "success")
+        else:
+            flash("Invalid image format. Allowed: png, jpg, jpeg, gif", "danger")
+
+        return redirect(url_for('user.profile'))
+
+    return render_template("user/profile.html", user=current_user)

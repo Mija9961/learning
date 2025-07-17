@@ -9,7 +9,7 @@ from datetime import datetime
 @mocktest_bp.route('/')
 @login_required
 def index():
-    return render_template('mocktest/index.html')
+    return render_template('mocktest/index.html', user=current_user)
 
 # @mocktest_bp.route('/test/<topic>', methods=['GET', 'POST'])
 # @login_required
@@ -103,7 +103,8 @@ def test(topic):
         questions=questions,
         current_question_index=current_question_index,
         remaining_time=remaining_time,
-        saved_answers=saved_answers
+        saved_answers=saved_answers,
+        user=current_user
     )
 
 @mocktest_bp.route('/save_progress', methods=['POST'])
@@ -128,7 +129,7 @@ def result():
     summary = session.pop('summary', [])
     score = session.pop('score', 0)
     total = session.pop('total', 0)
-    return render_template('mocktest/result.html', score=score, total=total, summary=summary)
+    return render_template('mocktest/result.html', score=score, total=total, summary=summary, user=current_user)
 
 
 @mocktest_bp.route('/submit', methods=['POST'])

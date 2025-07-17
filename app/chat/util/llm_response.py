@@ -14,7 +14,7 @@ system_messages_chat = instructions_chat
 
 from langchain_core.messages import HumanMessage, AIMessage
 
-from .graph import LLMResponseLangGraph
+from .graph import LLMResponseLangGraph, LLMResponseLangGraphAgent
 
 class LLMResponse:
     @staticmethod
@@ -93,4 +93,32 @@ class LLMResponse:
                 last_response = chunk.content
 
         return last_response or "Sorry, I couldn't generate a response."
+    
+
+
+    async def get_response_chat_anything(message: str):
+        """Generate a response asynchronously using the professor (AssistantAgent)."""
+        session_id = LLMResponse.get_session_id()
+
+        # Fetch all previous chat history for the session
+        chat_history = global_chat_sessions.get(session_id, [])
+
+        conversation_history = []
+        for entry in chat_history:
+            human_messsage = HumanMessage(content=entry['user'])
+            ai_messsage = AIMessage(content=entry['bot'])
+            conversation_history.append(human_messsage)
+            conversation_history.append(ai_messsage)
+
+        human_messsage = HumanMessage(content=message)
+
+        conversation_history.append(human_messsage)
+
+        last_response = LLMResponseLangGraphAgent.get_response(
+            ai_provider=session.get('ai_provider','openai'),
+            ai_model= session.get('ai_model','gpt-4.1-mini'),
+            message = conversation_history
+        )
+
+        return last_response.content or "Sorry, I couldn't generate a response."
     

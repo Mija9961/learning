@@ -13,6 +13,7 @@
   <!-- Bootstrap Icons CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+  {% block style %} {% endblock %}
 
 </head>
 <body>
@@ -90,11 +91,12 @@
     <!-- Profile Dropdown -->
     <div class="dropdown">
       <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-        <img src="{{ url_for('static', filename='images/avatar.png') }}" alt="Profile" width="36" height="36" class="rounded-circle me-2">
+        <img src="{{ url_for('static', filename='images/uploads/' + user.profile_image if user.profile_image else '/images/default.png') }}" alt="Profile" width="36" height="36" class="rounded-circle me-2">
         <span class="d-none d-md-inline">{{ session['username'] }}</span>
+
       </a>
       <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-        <li><a class="dropdown-item" href="{{ url_for('user.dashboard') }}"><i class="bi bi-person"></i> Profile</a></li>
+        <li><a class="dropdown-item" href="{{ url_for('user.profile') }}"><i class="bi bi-person"></i> Profile</a></li>
         <li><a class="dropdown-item" href="{{ url_for('user.settings') }}"><i class="bi bi-gear"></i> Settings</a></li>
         <li><hr class="dropdown-divider"></li>
         <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}"><i class="bi bi-box-arrow-right"></i> Logout</a></li>

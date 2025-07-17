@@ -12,6 +12,7 @@ class User(db.Model, UserMixin):
     session_token = db.Column(db.String(255))
     active = db.Column(db.Boolean, default=False, nullable=False)  # 👈 Added field
     is_admin = db.Column(db.Boolean, default=False)  # 👈 This determines admin access
+    profile_image = db.Column(db.String(255), nullable=True)
 
 
 class Conversation(db.Model, UserMixin):

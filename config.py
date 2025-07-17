@@ -18,4 +18,7 @@ class Config:
     RATELIMIT_STORAGE_URL = "redis://localhost:6379"
     RATELIMIT_HEADERS_ENABLED = True
 
+    # Upload Folder
+    UPLOAD_FOLDER = os.environ['UPLOAD_FOLDER']
+
 

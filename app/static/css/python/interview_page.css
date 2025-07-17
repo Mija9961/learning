@@ -4,7 +4,7 @@ h1 {
 }
 
 #chat-box {
-    width: 60%;
+    width: 70%;
     min-height: 20vh;
     max-height: 60vh;
     overflow-y: auto;
@@ -15,16 +15,34 @@ h1 {
     margin-left: auto;
     margin-right: auto;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+
 }
 
-.user-message {
+/* .user-message {
+    width: 90%;
     background: #d4eddaec;
     color: #155724;
     padding: 10px;
     margin: 5px 0;
     text-align: right;
     border-radius: 8px;
+    margin-left: auto;
+} */
+
+.user-message {
+  display: inline-block;            /* Shrink to fit content */
+  background: #d4eddaec;
+  color: #155724;
+  padding: 10px;
+  margin: 5px 0 5px auto;           /* Push to right */
+  text-align: left;
+  border-radius: 8px;
+  word-wrap: break-word;           /* Allow wrapping */
+  max-width: 96%;
 }
+
 
 .bot-message {
     background: #e0f7fa;
@@ -33,10 +51,11 @@ h1 {
     margin: 5px 0;
     text-align: left;
     border-radius: 8px;
+    max-width: 96%;
 }
 
 #chat-form {
-    width: 60%;
+    width: 70%;
     display: flex;
     gap: 10px;
     margin-bottom: 10px;
@@ -77,8 +96,8 @@ h1 {
     position: fixed;
     top: 45%;
     right: 20px;
-    width: 220px;
-    height: 200px;
+    width: 160px;
+    height: 140px;
     border: 2px solid #ccc;
     border-radius: 10px;
     overflow: hidden;
@@ -97,8 +116,8 @@ h1 {
 position: fixed;
 top: 80px;
 left: 10px;
-width: 200px;
-height: 200px;
+width: 150px;
+height: 150px;
 background-image: url("../../images/avatar.png");
 background-size: cover;
 background-position: center;

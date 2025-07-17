@@ -6,7 +6,7 @@ from .util.shared_state import global_chat_sessions
 import re, asyncio
 from app import limiter
 from flask_limiter.errors import RateLimitExceeded
-
+import time
 
 @chat_bp.route('/chat-global', methods=['POST'])
 @limiter.limit("2 per minute")
@@ -38,6 +38,26 @@ def get_chat_history():
         session_id = LLMResponse.get_session_id()
         chat_history = global_chat_sessions.get(session_id, [{"bot": "Hi there! This is Alexi. How can I help you?"}])
     return jsonify(chat_history)
+
+
+@chat_bp.route('/anything', methods=['GET','POST'])
+@login_required
+@limiter.limit("2 per minute")
+def chat_anything():
+    if request.method == "POST":
+        data = request.get_json()
+        user_input = data.get('message', '')
+        reply = asyncio.run(LLMResponse.get_response_chat_anything(user_input))
+        # time.sleep(15)
+        return jsonify({'response': reply})
+    chat_history = []
+    
+    return render_template(
+        'chat/ask_anything.html',
+        chat_history = chat_history,
+        user=current_user
+    )
+
 
 
 @chat_bp.errorhandler(RateLimitExceeded)

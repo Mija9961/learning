@@ -573,3 +573,42 @@ document.getElementById("copyCodeBtn").addEventListener("click", function () {
     alert("Copy failed. Please try manually.");
     });
 });
+
+
+
+function stopCamera() {
+  if (window.combinedStream) {
+    window.combinedStream.getTracks().forEach(track => {
+      track.stop(); // Stops both video and audio tracks
+    });
+    // Clear the video preview
+    const preview = document.getElementById('preview');
+    preview.srcObject = null;
+
+    // Optional cleanup
+    window.combinedStream = null;
+  }
+}
+
+
+let videoVisible = true;
+
+document.getElementById("toggleVideoBtn").addEventListener("click", function () {
+const videoContainer = document.getElementById("videoContainer");
+
+if (videoVisible) {
+    stopCamera();
+    videoContainer.style.display = "none";
+    this.innerText = "🎥 Show Video";
+    this.classList.remove("btn-outline-danger");
+    this.classList.add("btn-outline-success");
+} else {
+    startCamera();
+    videoContainer.style.display = "block";
+    this.innerText = "🎥 Hide Video";
+    this.classList.remove("btn-outline-success");
+    this.classList.add("btn-outline-danger");
+}
+
+videoVisible = !videoVisible;
+});

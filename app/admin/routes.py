@@ -1,5 +1,5 @@
 from flask import render_template, flash, redirect, url_for, request
-from flask_login import login_required
+from flask_login import login_required, current_user
 from . import admin_bp
 from ..models import User, AIModel
 from ..extensions import db
@@ -10,13 +10,13 @@ from .util.decorators import admin_required
 @login_required
 @admin_required
 def index():
-    return render_template('admin/index.html')
+    return render_template('admin/index.html', user=current_user)
 
 @admin_bp.route('/dashboard')
 @login_required
 @admin_required
 def dashboard():
-    return render_template('admin/dashboard.html')
+    return render_template('admin/dashboard.html', user=current_user)
 
 @admin_bp.route('/users')
 @admin_required
@@ -25,7 +25,7 @@ def users():
     # Sample: users = User.query.all()
     users = User.query.order_by(User.id).all()
 
-    return render_template('admin/users.html', users=users)
+    return render_template('admin/users.html', users=users, user=current_user)
 
 @admin_bp.route("/users/<int:user_id>/toggle", methods=["POST"])
 @login_required
@@ -56,7 +56,7 @@ def ai_models():
         return redirect(url_for('admin.ai_models'))
 
     models = AIModel.query.order_by(AIModel.id).all()
-    return render_template("admin/ai_models.html", models=models)
+    return render_template("admin/ai_models.html", models=models, user=current_user)
 
 
 @admin_bp.route("/ai-models/<int:model_id>/edit", methods=["GET", "POST"])
@@ -70,7 +70,7 @@ def edit_ai_model(model_id):
         db.session.commit()
         flash("AI Model updated successfully.", "success")
         return redirect(url_for("admin.ai_models"))
-    return render_template("admin/edit_ai_model.html", model=model)
+    return render_template("admin/edit_ai_model.html", model=model, user=current_user)
 
 
 

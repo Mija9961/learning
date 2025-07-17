@@ -121,7 +121,8 @@ class LLMResponse:
             conversation_history = []# [f"User: {entry['user']}\nBot: {entry['bot']}" for entry in chat_history]
             for entry in chat_history:
                 human_messsage = HumanMessage(content=entry['user'])
-                ai_messsage = AIMessage(content=entry['bot'])
+                clean_bot_message = LLMResponse.remove_html_tags(entry['bot'])
+                ai_messsage = AIMessage(content=clean_bot_message)
                 conversation_history.append(human_messsage)
                 conversation_history.append(ai_messsage)
 
@@ -135,7 +136,7 @@ class LLMResponse:
                 message = conversation_history,
                 request_type = "learn"
             )
-
+            print("Converstion history::",conversation_history)
             return last_response.content or "Sorry, I couldn't generate a response."
 
         professor, professor_name = LLMResponse.get_professor_learn(session_id)

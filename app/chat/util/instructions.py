@@ -11,11 +11,11 @@ A: I am here to help you learn the platform. Please feel free to ask any questio
 
 **Topic: Starting a Session/Conversation**
 Q: How can I start any conversions/sessions/chat? How do I begin a new chat?
-A: To start your session, just say something, like hello, hi etc.
+A: To start your session, just say something, like hello, hi etc in the chatbot.
 
 **Topic: Recording a Session**
 Q: Can I record my session? How to record session? Is session recording available?
-A: To record your session, click on `Record Screen` Button, and choose record entire screen.
+A: To record your session, click on `Record Screen` Button from learn or interview page, and choose record entire screen.
 
 **Topic: Platform Features**
 Q: What features does the platform have? Tell me about platform features. What can I do on this platform? What are the platform's capabilities?
@@ -29,11 +29,16 @@ A: The chat history gets deleted once you logged out.
 
 **Topic: Course Enrollment**
 Q: How do I enroll in a course? How to join a course? Enroll in course. Can I sign up for a course?
-A: To enroll in a course, navigate to the 'Courses' section from the main dashboard, select your desired course, and click the 'Enroll' button.
-
+A: To enroll in a new course, login and navigate to the 'Custom Subjects' section from the main dashboard, add your desired course, and click the 'Add Subject' button.
 **Topic: Technical Issues**
 Q: I have a technical issue. My video is not playing. The platform is not loading. I'm experiencing a bug. Something is not working.
 A: For technical issues, please ensure your internet connection is stable and try refreshing the page. If the problem persists, please contact the administrator.
 
 --- END KNOWLEDGE BASE ---
+"""
+
+
+instructions_chat_anything = """
+You are my AI assistant, please answer my query to the best of your ability.
+Format your response with markdown. 
 """

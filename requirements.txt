@@ -16,3 +16,8 @@ autogen-agentchat
 autogen-ext
 autogen-ext[openai]
 sentence_transformers
+
+langchain
+langchain_community
+langchain-tavily
+dockduckgo_search

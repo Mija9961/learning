@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 {% endblock %}
 
-{% block title %}Python | Learn{% endblock %}
+{% block title %} {{ subject }} | Learn{% endblock %}
 
 {% block content %}
   {% with messages = get_flashed_messages(with_categories=true) %}
@@ -123,7 +123,11 @@
     <div class="col-6 col-md-4 col-lg-3">
       <button id="muteToggleBtn" type="button" class="btn btn-outline-warning w-100">🔇 Mute Avatar Auto Speak</button>
     </div>
-    
+
+    <div class="col-6 col-md-4 col-lg-3">
+      <button id="toggleVideoBtn" class="btn btn-outline-danger w-100">🎥 Hide Video</button>
+    </div>
+
   </div>
 
     <!-- Modal -->

@@ -71,7 +71,7 @@ def subject(subject,subject_id):
     subject = subject_obj.subject
 
     return render_template("custom_subject/subject.html",
-                           subject=subject, subject_id=subject_id)
+                           subject=subject, subject_id=subject_id, user=current_user)
 
 
 @custom_subject_bp.route('/<subject>/learn/select/<subject_id>')
