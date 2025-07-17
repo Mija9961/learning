@@ -65,3 +65,14 @@ class Subject(db.Model, UserMixin):
     syllabus = db.Column(db.Text, nullable=False)
     added_at = db.Column(db.DateTime, server_default=db.func.now())
     user_email = db.Column(db.String(100), nullable=False)
+
+
+class Resume(db.Model):
+    __tablename__ = 'resume'
+    id = db.Column(db.Integer, primary_key=True)
+    resume_id = db.Column(db.String(50), unique=True, nullable=False)
+    user_email = db.Column(db.String(100), nullable=False)
+    filename = db.Column(db.String(255), nullable=False)
+    filepath = db.Column(db.String(255), nullable=False)
+    added_at = db.Column(db.DateTime, server_default=db.func.now())
+    resume_content = db.Column(db.Text, nullable=False)
