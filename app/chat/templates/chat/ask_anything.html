@@ -7,6 +7,38 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
+<style>
+  /* Typing indicator animation */
+  .typing-indicator {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 4px;
+  }
+
+  .typing-indicator span {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background-color: #666;
+    border-radius: 50%;
+    animation: typing 1s infinite ease-in-out;
+  }
+
+  .typing-indicator span:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  .typing-indicator span:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+
+  @keyframes typing {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+</style>
+
 {% endblock %}
 
 {% block content %}
@@ -28,7 +60,6 @@
 <div id="chatbox" class="card shadow-lg">
   <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
     <div><i class="bi bi-robot me-2"></i>AI Assistant</div>
-    <button class="btn-close btn-close-white" id="chat-anything-close" aria-label="Close"></button>
   </div>
 
   <div class="card-body overflow-auto" id="chat-anything-messages" style="height: 300px; background-color: #f8f9fa;">
@@ -38,7 +69,7 @@
   <div class="card-footer bg-white border-top">
     <form id="chat-anything-form" class="d-flex align-items-center">
       <input type="text" id="chat-anything-input" class="form-control me-2" placeholder="Type your message..." required />
-      <button type="submit" class="btn btn-outline-primary"><i class="bi bi-send"></i></button>
+      <button type="submit" id="submitBtn" class="btn btn-outline-primary"><i class="bi bi-send"></i></button>
     </form>
   </div>
 </div>
@@ -47,54 +78,110 @@
 {% block script %}
 <script>
   const chatToggle = document.getElementById('chat-anything-toggle');
-  const chatbox = document.getElementById('chatbox');
-  const chatClose = document.getElementById('chat-anything-close');
+  const chatBox = document.getElementById('chatbox');
   const chatForm = document.getElementById('chat-anything-form');
   const chatInput = document.getElementById('chat-anything-input');
   const chatMessages = document.getElementById('chat-anything-messages');
 
-  // Open/close toggle
-  chatToggle.addEventListener('click', () => chatbox.style.display = 'block');
-  chatClose.addEventListener('click', () => chatbox.style.display = 'none');
+  // Load chat history when page loads
+  async function loadChatHistory() {
+    try {
+      const response = await fetch('/chat/chat-history-anything');
+      if (!response.ok) throw new Error('Failed to fetch history');
+      
+      const history = await response.json();
+      console.log("History", history);
+      
+      // Clear existing messages except the welcome message
+      while (chatMessages.children.length > 1) {
+        chatMessages.removeChild(chatMessages.lastChild);
+      }
+
+      history.forEach(entry => {
+        if (entry.user) {
+          appendMessage('user', entry.user);
+        }
+        if (entry.bot) {
+          appendMessage('bot', entry.bot);
+        }
+      });
+      
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    } catch (err) {
+      console.error("Failed to load history:", err);
+    }
+  }
+
+  // Load history when page loads
+  document.addEventListener('DOMContentLoaded', loadChatHistory);
 
   // Handle form submit
   chatForm.addEventListener('submit', async function (e) {
     e.preventDefault();
+    
     const userMsg = chatInput.value.trim();
     if (!userMsg) return;
 
-    appendMessage('user', userMsg);
-    chatInput.value = '';
+    try {
+      // Add user message to chat
+      appendMessage('user', userMsg);
+      chatInput.value = '';
+      chatInput.focus();
 
-    // Simulate bot typing...
-    appendMessage('bot', '...');
-    await new Promise(r => setTimeout(r, 800)); // Fake delay
+      // Show typing indicator
+      appendMessage('bot', '...');
 
-    // Replace this fetch with actual Flask endpoint
-    const response = await fetch('/chat/anything', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: userMsg })
-    });
+      // Send message to server
+      const response = await fetch('/chat/anything', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: userMsg })
+      });
 
-    const data = await response.json();
-    chatMessages.lastElementChild.remove(); // Remove '...'
-    responseMsg = data.response;
-    appendMessage('bot', responseMsg);
+      if (!response.ok) throw new Error('Failed to send message');
+
+      const data = await response.json();
+      
+      // Remove typing indicator and show response
+      chatMessages.lastElementChild.remove();
+      appendMessage('bot', data.response);
+
+    } catch (error) {
+      console.error('Error:', error);
+      chatMessages.lastElementChild.remove(); // Remove typing indicator
+      appendMessage('bot', 'Sorry, there was an error processing your request.');
+    }
   });
 
   function appendMessage(sender, text) {
     const wrapper = document.createElement('div');
-    wrapper.className = sender === 'user'
-      ? 'd-flex justify-content-end mb-2'
-      : 'd-flex justify-content-start mb-2';
+    wrapper.className = `d-flex ${sender === 'user' ? 'justify-content-end' : 'justify-content-start'} mb-2`;
 
     const bubble = document.createElement('div');
     bubble.className = 'p-2 rounded shadow-sm';
     bubble.style.maxWidth = '75%';
-    bubble.innerText = text;
+    
+    // Add bot avatar for bot messages
+    if (sender === 'bot' && text !== '...') {
+      const avatar = document.createElement('img');
+      avatar.src = '/static/images/chat-agent.png';
+      avatar.className = 'rounded-circle me-2';
+      avatar.width = 32;
+      avatar.height = 32;
+      avatar.alt = 'Agent';
+      wrapper.appendChild(avatar);
+    }
+
+    // Style the message bubble
     bubble.style.backgroundColor = sender === 'user' ? '#0d6efd' : '#e9ecef';
     bubble.style.color = sender === 'user' ? 'white' : 'black';
+    
+    // Handle typing indicator
+    if (text === '...') {
+      bubble.innerHTML = '<div class="typing-indicator"><span></span><span></span><span></span></div>';
+    } else {
+      bubble.innerText = text;
+    }
 
     wrapper.appendChild(bubble);
     chatMessages.appendChild(wrapper);

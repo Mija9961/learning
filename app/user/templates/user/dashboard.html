@@ -481,23 +481,67 @@ setInterval(updateTime, 1000);
 
 const chatToggle = document.getElementById('chat-anything-toggle');
 const chatBtnGlobal = document.getElementById("chat-button-global");
-const chatbox = document.getElementById('chatbox');
+const chatBox = document.getElementById('chatbox');
 const chatClose = document.getElementById('chat-anything-close');
 const chatForm = document.getElementById('chat-anything-form');
 const chatInput = document.getElementById('chat-anything-input');
 const chatMessages = document.getElementById('chat-anything-messages');
 
 // Open chat
+// chatToggle.addEventListener('click', () => {
+//   chatBtnGlobal.style.display = 'none';
+//   console.log("Chat Toggle Box", chatBtnGlobal );
+//   chatBox.style.display = 'block';
+//   chatInput.focus();
+// });
+
 chatToggle.addEventListener('click', () => {
   chatBtnGlobal.style.display = 'none';
   console.log("Chat Toggle Box", chatBtnGlobal );
-  chatbox.style.display = 'block';
+  chatBox.style.display = 'block';
   chatInput.focus();
+
+  // Clear old messages
+  chatMessages.innerHTML = `<div class="text-muted small mb-2">
+      <i class="bi bi-info-circle me-1"></i>Ask me anything about learning, coding, or platform features...
+    </div>
+    `;
+
+  // Fetch chat history from server
+  fetch('/chat/chat-history-anything')
+    .then(response => response.json())
+    .then(history => {
+      console.log("History", history);
+      history.forEach(entry => {
+        if (entry.user) {
+          const userMsgDiv = document.createElement("div");
+          userMsgDiv.className = "d-flex align-items-end justify-content-end mb-2";
+          userMsgDiv.innerHTML = `
+            <div class="chat-message bg-primary text-white p-2 rounded">${entry.user}</div>
+          `;
+          chatMessages.appendChild(userMsgDiv);
+        }
+
+        if (entry.bot) {
+          const botMsgDiv = document.createElement("div");
+          botMsgDiv.className = "d-flex align-items-start mb-2";
+          botMsgDiv.innerHTML = `
+            <div class="chat-message bg-light p-2 rounded">${entry.bot}</div>
+          `;
+          chatMessages.appendChild(botMsgDiv);
+        }
+      });
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    })
+    .catch(err => {
+      console.error("Failed to load history:", err);
+    });
 });
+
 
 // Close chat
 chatClose.addEventListener('click', () => {
-  chatbox.style.display = 'none';
+  chatBox.style.display = 'none';
   chatBtnGlobal.style.display = 'flex';
 });
 

@@ -6,7 +6,7 @@ from .instructions import instructions_chat
 from flask import session
 from flask_login import current_user
 
-from .shared_state import global_chat_sessions
+from .shared_state import global_chat_sessions, anything_chat_sessions
 
 load_dotenv()
 # Setup model
@@ -101,7 +101,7 @@ class LLMResponse:
         session_id = LLMResponse.get_session_id()
 
         # Fetch all previous chat history for the session
-        chat_history = global_chat_sessions.get(session_id, [])
+        chat_history = anything_chat_sessions.get(session_id, [])
 
         conversation_history = []
         for entry in chat_history:
