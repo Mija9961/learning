@@ -2,20 +2,17 @@ from autogen_agentchat.agents import AssistantAgent
 from autogen_ext.models.openai import OpenAIChatCompletionClient
 from dotenv import load_dotenv
 from uuid import uuid4
-from .instructions import instructions_interview, instructions_learn
+from .instructions import get_prompt_interview, get_prompt_learn
 from flask import session
 from .shared_state import chat_sessions
 from bs4 import BeautifulSoup
-
-# Setup model
-system_messages_interview = instructions_interview
-system_messages_learn = instructions_learn
-model_client = OpenAIChatCompletionClient(model="gpt-4.1-mini")
 
 from langchain_core.messages import HumanMessage, AIMessage
 
 from .graph import LLMResponseLangGraph
 
+# Setup model
+model_client = OpenAIChatCompletionClient(model="gpt-4.1-mini")
 class LLMResponse:
     @staticmethod
     def get_model_client():
@@ -43,7 +40,7 @@ class LLMResponse:
             name=safe_name,
             description="Professor who asks interview questions.",
             model_client=LLMResponse.get_model_client(),
-            system_message=system_messages_interview,
+            system_message=get_prompt_interview(),
         ), safe_name
 
     async def get_response_interview(message):
@@ -108,7 +105,7 @@ class LLMResponse:
             name=safe_name,
             description="Professor who teaches Python",
             model_client=LLMResponse.get_model_client(),
-            system_message=system_messages_learn,
+            system_message=get_prompt_learn(),
         ), safe_name
 
     async def get_response_learn(message):

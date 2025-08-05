@@ -4,7 +4,7 @@ from langchain_core.messages import HumanMessage, SystemMessage, BaseMessage
 import os
 from typing import TypedDict, Annotated, Sequence
 from operator import add as add_messages
-from .instructions import instructions_learn, instructions_interview, get_prompt_learn
+from .instructions import get_prompt_interview, get_prompt_learn
 from dotenv import load_dotenv
 from functools import lru_cache
 from bs4 import BeautifulSoup
@@ -31,7 +31,7 @@ class LLMResponseLangGraph:
             return {"messages": [response]}
         
         def llm_node_interview(state: AgentState) -> AgentState:
-            messages = [SystemMessage(content=instructions_interview)] + state["messages"]
+            messages = [SystemMessage(content=get_prompt_interview())] + state["messages"]
             response = llm.invoke(messages)
             return {"messages": [response]}
 

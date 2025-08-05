@@ -54,8 +54,8 @@
             <p class="card-text">
               Test your {{ subject }} knowledge with mock interview questions, get instant feedback, and improve your confidence.
             </p>
-            <a href="{{ url_for('python.interview_select', subject=subject) }}" 
-              class="btn btn-success {% if request.path == url_for('python.interview_select', subject=subject) %}active{% endif %}">
+            <a href="{{ url_for('custom_subject.subject_interview_select', subject=subject, subject_id=subject_id) }}" 
+              class="btn btn-success {% if request.path == url_for('custom_subject.subject_interview_select', subject=subject, subject_id=subject_id) %}active{% endif %}">
               Start Interview Practice
             </a>
           </div>
