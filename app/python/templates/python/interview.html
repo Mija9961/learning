@@ -46,7 +46,9 @@
   <div id="videoContainer">
     <video id="preview" autoplay muted></video>
   </div>
-
+  <!-- AI Avatar -->
+  <div id="avatar" class="avatar" title="I'm Professor Python! Drag me around!"></div>
+  
   <div id="chat-box">
     {% for m in messages %}
       <div class="user-message">{{ m.user }}</div>
@@ -151,8 +153,7 @@
 </div>
 
 
-  <!-- AI Avatar -->
-  <div id="avatar" class="avatar" title="I'm Professor Python! Drag me around!"></div>
+  
 
 {% endblock %}
 

@@ -599,13 +599,13 @@ const videoContainer = document.getElementById("videoContainer");
 if (videoVisible) {
     stopCamera();
     videoContainer.style.display = "none";
-    this.innerText = "🎥 Show Video";
+    this.innerHTML = "<i class=\"bi bi-eye me-2\"></i> Show Video";
     this.classList.remove("btn-outline-danger");
     this.classList.add("btn-outline-success");
 } else {
     startCamera();
     videoContainer.style.display = "block";
-    this.innerText = "🎥 Hide Video";
+    this.innerHTML = "<i class='bi bi-eye-slash me-2'></i> Hide Video";
     this.classList.remove("btn-outline-success");
     this.classList.add("btn-outline-danger");
 }

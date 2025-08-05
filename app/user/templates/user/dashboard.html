@@ -30,6 +30,172 @@
     transform: scale(1);
   }
 }
+/* Add to your dashboard CSS or inside <style> in dashboard.html */
+/* ...existing code... */
+:root {
+  --primary-color: #2563eb;
+  --primary-dark: #1d4ed8;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --info-color: #0ea5e9;
+  --border-radius: 1.2rem;
+  --border-radius-lg: 1.5rem;
+  --border-radius-sm: 0.7rem;
+  --shadow-sm: 0 2px 8px rgba(37,99,235,0.04);
+  --shadow-md: 0 4px 16px rgba(37,99,235,0.08);
+  --shadow-lg: 0 8px 32px rgba(37,99,235,0.12);
+  --bg-primary: #f8fafc;
+  --bg-secondary: #f1f5f9;
+  --border-color: #e5e7eb;
+  --text-primary: #22223b;
+  --text-muted: #6c757d;
+  --transition: all 0.18s cubic-bezier(.4,0,.2,1);
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Inter', Arial, sans-serif;
+}
+
+.stats-card {
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-md);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  color: #fff;
+  padding: 1.5rem;
+  margin-bottom: 1.2rem;
+  transition: var(--transition);
+  min-height: 140px;
+  position: relative;
+  overflow: hidden;
+}
+.stats-card .stats-number {
+  font-size: 2.3rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+}
+.stats-card .stats-label {
+  font-size: 1rem;
+  opacity: 0.92;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+.stats-card .bi {
+  opacity: 0.85;
+}
+.stats-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: var(--shadow-lg);
+}
+
+.welcome-section {
+  background: linear-gradient(135deg, rgba(37,99,235,0.10) 0%, rgba(29,78,216,0.10) 100%);
+  border-radius: var(--border-radius);
+  padding: 2.2rem 2rem;
+  margin-bottom: 2.2rem;
+  border: 1px solid rgba(37,99,235,0.15);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(10px);
+}
+
+.feature-card {
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  overflow: hidden;
+  height: 100%;
+  border: none;
+  background: #fff;
+}
+.feature-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px) scale(1.02);
+}
+.feature-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+}
+
+.recent-activity {
+  background: #fff;
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+  min-height: 420px;
+}
+.activity-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+.activity-item:last-child {
+  border-bottom: none;
+}
+.activity-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+  font-size: 1.1rem;
+  color: #fff;
+}
+.activity-content {
+  flex: 1;
+}
+.activity-title {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+.activity-time {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.card {
+  border-radius: var(--border-radius);
+}
+
+#chatbox {
+  border-radius: var(--border-radius-lg) !important;
+  box-shadow: var(--shadow-lg) !important;
+  background: #fff;
+  border: none;
+}
+#chatbox .card-header {
+  border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0 !important;
+  background: linear-gradient(90deg, var(--primary-color) 60%, var(--primary-dark) 100%);
+  color: #fff;
+  border: none;
+}
+#chatbox .card-footer {
+  border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg) !important;
+  background: #f8fafc;
+  border: none;
+}
+#chatbox .form-control {
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--border-color);
+}
+#chatbox .btn {
+  border-radius: var(--border-radius-sm);
+}
+
+.fade-in {
+  animation: fadeIn 0.8s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(24px);}
+  to { opacity: 1; transform: none;}
+}
+/* ...existing code... */
 </style>
 {% endblock %}
 
@@ -37,54 +203,233 @@
 <div class="container py-5">
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
-      <div class="flash-messages">
+      <div class="flash-messages mb-4">
         {% for category, message in messages %}
-          <div class="alert alert-{{ category }}">{{ message }}</div>
+          <div class="alert alert-{{ category }} fade-in">
+            <i class="bi bi-{{ 'check-circle' if category == 'success' else 'exclamation-triangle' }} me-2"></i>
+            {{ message }}
+          </div>
         {% endfor %}
       </div>
     {% endif %}
   {% endwith %}
 
-  <h2 class="mb-4">👋 Welcome back, {{ session.get('username') }}!</h2>
-  <p class="lead text-muted">Your personalized learning dashboard at a glance.</p>
+  <!-- Welcome Section -->
+  <div class="welcome-section fade-in">
+    <div class="row align-items-center">
+      <div class="col-lg-8">
+        <h1 class="display-6 fw-bold mb-3">
+          👋 Welcome back, {{ session.get('username') }}!
+        </h1>
+        <p class="lead text-muted mb-0">
+          Ready to continue your learning journey? Here's what's happening with your account.
+        </p>
+      </div>
+      <div class="col-lg-4 text-lg-end">
+        <div class="d-flex align-items-center justify-content-lg-end">
+          <div class="me-3">
+            <div class="text-muted small">Current Time</div>
+            <div class="fw-semibold" id="current-time"></div>
+          </div>
+          <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+            <i class="bi bi-clock"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  <div class="row row-cols-1 row-cols-md-2 g-4 mt-4">
-    <div class="col">
-      <div class="card h-100 shadow-sm">
-        <div class="card-body">
-          <h5 class="card-title">🧠 Custom Subjects</h5>
-          <p class="card-text">Explore your added subjects or start a new one tailored to your interests.</p>
-          <a href="{{ url_for('custom_subject.index') }}" class="btn btn-primary">Go to Subjects</a>
+  <!-- Statistics Cards -->
+  <div class="row mb-5">
+    <div class="col-lg-3 col-md-6">
+      <div class="stats-card">
+        <div class="stats-number">12</div>
+        <div class="stats-label">Learning Sessions</div>
+        <div class="mt-2">
+          <i class="bi bi-graph-up"></i>
+          <span class="ms-1 small">+3 this week</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+      <div class="stats-card" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+        <div class="stats-number">85%</div>
+        <div class="stats-label">Completion Rate</div>
+        <div class="mt-2">
+          <i class="bi bi-check-circle"></i>
+          <span class="ms-1 small">On track</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+      <div class="stats-card" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+        <div class="stats-number">8</div>
+        <div class="stats-label">Mock Tests</div>
+        <div class="mt-2">
+          <i class="bi bi-trophy"></i>
+          <span class="ms-1 small">+2 this month</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+      <div class="stats-card" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);">
+        <div class="stats-number">24</div>
+        <div class="stats-label">AI Interactions</div>
+        <div class="mt-2">
+          <i class="bi bi-robot"></i>
+          <span class="ms-1 small">This week</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="row g-4">
+    <!-- Feature Cards -->
+    <div class="col-lg-8">
+      <h3 class="mb-4">Quick Actions</h3>
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <div class="card feature-card h-100">
+            <div class="card-body text-center p-4">
+              <div class="feature-icon">
+                <i class="bi bi-book"></i>
+              </div>
+              <h5 class="card-title mb-3">Custom Subjects</h5>
+              <p class="card-text text-muted mb-4">
+                Explore your added subjects or start a new one tailored to your interests and career goals.
+              </p>
+              <a href="{{ url_for('custom_subject.index') }}" class="btn btn-primary">
+                <i class="bi bi-arrow-right me-2"></i>Explore Subjects
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="card feature-card h-100">
+            <div class="card-body text-center p-4">
+              <div class="feature-icon">
+                <i class="bi bi-code-slash"></i>
+              </div>
+              <h5 class="card-title mb-3">Python Learning</h5>
+              <p class="card-text text-muted mb-4">
+                Practice Python coding, ask questions, and learn step by step with our AI tutor.
+              </p>
+              <a href="{{ url_for('python.index') }}" class="btn btn-success">
+                <i class="bi bi-play-circle me-2"></i>Start Learning
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="card feature-card h-100">
+            <div class="card-body text-center p-4">
+              <div class="feature-icon">
+                <i class="bi bi-clipboard-check"></i>
+              </div>
+              <h5 class="card-title mb-3">Mock Tests</h5>
+              <p class="card-text text-muted mb-4">
+                Challenge yourself with comprehensive mock tests and track your progress over time.
+              </p>
+              <a href="{{ url_for('mocktest.index') }}" class="btn btn-warning">
+                <i class="bi bi-pencil-square me-2"></i>Take a Test
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="card feature-card h-100">
+            <div class="card-body text-center p-4">
+              <div class="feature-icon">
+                <i class="bi bi-camera-video"></i>
+              </div>
+              <h5 class="card-title mb-3">Mock Interviews</h5>
+              <p class="card-text text-muted mb-4">
+                Practice with realistic AI-driven interviews and improve your communication skills.
+              </p>
+              <a href="{{ url_for('mock_interview.index') }}" class="btn btn-info">
+                <i class="bi bi-camera-video me-2"></i>Start Interview
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="col">
-      <div class="card h-100 shadow-sm">
-        <div class="card-body">
-          <h5 class="card-title">🐍 Python Learning</h5>
-          <p class="card-text">Practice Python coding, ask questions, and learn step by step with AI.</p>
-          <a href="{{ url_for('python.index') }}" class="btn btn-success">Start Learning</a>
+    <!-- Recent Activity -->
+    <div class="col-lg-4">
+      <div class="recent-activity">
+        <h4 class="mb-4">
+          <i class="bi bi-clock-history me-2"></i>Recent Activity
+        </h4>
+        
+        <div class="activity-item">
+          <div class="activity-icon" style="background: var(--primary-color);">
+            <i class="bi bi-book"></i>
+          </div>
+          <div class="activity-content">
+            <div class="activity-title">Completed Python Basics</div>
+            <div class="activity-time">2 hours ago</div>
+          </div>
+        </div>
+
+        <div class="activity-item">
+          <div class="activity-icon" style="background: var(--success-color);">
+            <i class="bi bi-check-circle"></i>
+          </div>
+          <div class="activity-content">
+            <div class="activity-title">Mock Test Completed</div>
+            <div class="activity-time">1 day ago</div>
+          </div>
+        </div>
+
+        <div class="activity-item">
+          <div class="activity-icon" style="background: var(--warning-color);">
+            <i class="bi bi-camera-video"></i>
+          </div>
+          <div class="activity-content">
+            <div class="activity-title">Mock Interview Session</div>
+            <div class="activity-time">3 days ago</div>
+          </div>
+        </div>
+
+        <div class="activity-item">
+          <div class="activity-icon" style="background: var(--info-color);">
+            <i class="bi bi-robot"></i>
+          </div>
+          <div class="activity-content">
+            <div class="activity-title">AI Chat Session</div>
+            <div class="activity-time">1 week ago</div>
+          </div>
+        </div>
+
+        <div class="text-center mt-3">
+          <a href="#" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-eye me-1"></i>View All Activity
+          </a>
         </div>
       </div>
     </div>
+  </div>
 
-    <div class="col">
-      <div class="card h-100 shadow-sm">
-        <div class="card-body">
-          <h5 class="card-title">📝 Mock Tests</h5>
-          <p class="card-text">Challenge yourself with mock tests and improve your skills.</p>
-          <a href="{{ url_for('mocktest.index') }}" class="btn btn-warning">Take a Test</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="col">
-      <div class="card h-100 shadow-sm">
-        <div class="card-body">
-          <h5 class="card-title">💬 Ask AI Anything</h5>
-          <p class="card-text">Get help instantly with our AI-powered assistant — available 24/7.</p>
-          <button class="btn btn-secondary" id="chat-anything-toggle">Open Chat</button>
+  <!-- AI Assistant Section -->
+  <div class="row mt-5">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body text-center p-5">
+          <div class="feature-icon">
+            <i class="bi bi-robot"></i>
+          </div>
+          <h3 class="mb-3">Need Help? Ask Our AI Assistant</h3>
+          <p class="text-muted mb-4">
+            Get instant help with any questions about learning, coding, or platform features.
+          </p>
+          <button class="btn btn-primary btn-lg" id="chat-anything-toggle">
+            <i class="bi bi-chat-dots me-2"></i>Open AI Assistant
+          </button>
         </div>
       </div>
     </div>
@@ -92,20 +437,27 @@
 </div>
 
 <!-- Chat Box -->
-<div id="chatbox" class="card shadow-lg" style="display: none; position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); width: 90%; max-height: 95%; z-index: 999;">
-  <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-    <div><i class="bi bi-robot me-2"></i>AI Assistant</div>
+<div id="chatbox" class="card shadow-xl" style="display: none; position: fixed; bottom: 2rem; right: 2rem; width: 400px; max-height: 600px; z-index: 999; border-radius: var(--border-radius-lg);">
+  <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center" style="border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;">
+    <div class="d-flex align-items-center">
+      <i class="bi bi-robot me-2"></i>
+      <strong>AI Assistant</strong>
+    </div>
     <button class="btn-close btn-close-white" id="chat-anything-close" aria-label="Close"></button>
   </div>
 
-  <div class="card-body overflow-auto" id="chat-anything-messages" style="height: 300px; background-color: #f8f9fa;">
-    <div class="text-muted small mb-2">💬 Ask me anything...</div>
+  <div class="card-body overflow-auto" id="chat-anything-messages" style="height: 400px; background-color: var(--bg-secondary);">
+    <div class="text-muted small mb-2">
+      <i class="bi bi-info-circle me-1"></i>Ask me anything about learning, coding, or platform features...
+    </div>
   </div>
 
   <div class="card-footer bg-white border-top">
     <form id="chat-anything-form" class="d-flex align-items-center">
       <input type="text" id="chat-anything-input" class="form-control me-2" placeholder="Type your message..." required />
-      <button type="submit" class="btn btn-outline-primary"><i class="bi bi-send"></i></button>
+      <button type="submit" class="btn btn-primary">
+        <i class="bi bi-send"></i>
+      </button>
     </form>
   </div>
 </div>
@@ -113,7 +465,22 @@
 
 {% block script %}
 <script>
+// Update current time
+function updateTime() {
+  const now = new Date();
+  const timeString = now.toLocaleTimeString('en-US', { 
+    hour: '2-digit', 
+    minute: '2-digit',
+    hour12: true 
+  });
+  document.getElementById('current-time').textContent = timeString;
+}
+
+updateTime();
+setInterval(updateTime, 1000);
+
 const chatToggle = document.getElementById('chat-anything-toggle');
+const chatBtnGlobal = document.getElementById("chat-button-global");
 const chatbox = document.getElementById('chatbox');
 const chatClose = document.getElementById('chat-anything-close');
 const chatForm = document.getElementById('chat-anything-form');
@@ -122,6 +489,8 @@ const chatMessages = document.getElementById('chat-anything-messages');
 
 // Open chat
 chatToggle.addEventListener('click', () => {
+  chatBtnGlobal.style.display = 'none';
+  console.log("Chat Toggle Box", chatBtnGlobal );
   chatbox.style.display = 'block';
   chatInput.focus();
 });
@@ -129,6 +498,7 @@ chatToggle.addEventListener('click', () => {
 // Close chat
 chatClose.addEventListener('click', () => {
   chatbox.style.display = 'none';
+  chatBtnGlobal.style.display = 'flex';
 });
 
 // On submit
@@ -154,7 +524,7 @@ chatForm.addEventListener('submit', async function (e) {
     appendMessage('bot', data.response);
   } catch (error) {
     typingEl.remove();
-    appendMessage('bot', '⚠️ Sorry, something went wrong.');
+    appendMessage('bot', '⚠️ Sorry, something went wrong. Please try again.');
   }
 });
 
@@ -165,11 +535,12 @@ function appendMessage(sender, text) {
     : 'd-flex justify-content-start mb-2';
 
   const bubble = document.createElement('div');
-  bubble.className = 'p-2 rounded shadow-sm';
-  bubble.style.maxWidth = '75%';
+  bubble.className = 'p-3 rounded shadow-sm';
+  bubble.style.maxWidth = '85%';
   bubble.innerText = text;
-  bubble.style.backgroundColor = sender === 'user' ? '#0d6efd' : '#e9ecef';
-  bubble.style.color = sender === 'user' ? 'white' : 'black';
+  bubble.style.backgroundColor = sender === 'user' ? 'var(--primary-color)' : 'var(--bg-primary)';
+  bubble.style.color = sender === 'user' ? 'white' : 'var(--text-primary)';
+  bubble.style.borderRadius = 'var(--border-radius-sm)';
 
   wrapper.appendChild(bubble);
   chatMessages.appendChild(wrapper);
@@ -181,7 +552,7 @@ function showTypingIndicator() {
   const wrapper = document.createElement('div');
   wrapper.className = 'd-flex justify-content-start mb-2';
   wrapper.innerHTML = `
-    <div class="p-2 rounded shadow-sm" style="background-color: #e9ecef; color: black; max-width: 75%;">
+    <div class="p-3 rounded shadow-sm" style="background-color: var(--bg-primary); color: var(--text-primary); max-width: 85%; border-radius: var(--border-radius-sm);">
       <div class="typing-dots">
         <span></span><span></span><span></span>
       </div>
@@ -192,5 +563,5 @@ function showTypingIndicator() {
   return wrapper;
 }
 </script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}
