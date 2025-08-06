@@ -46,7 +46,9 @@
   <div id="videoContainer">
     <video id="preview" autoplay muted></video>
   </div>
-
+  <!-- AI Avatar -->
+  <div id="avatar" class="avatar" title="I'm Professor Python! Drag me around!"></div>
+  
   <div id="chat-box">
     {% for m in messages %}
       <div class="user-message">{{ m.user }}</div>
@@ -59,37 +61,11 @@
     <input type="text" id="message" name="message" required autocomplete="off" placeholder="Type your message..." />
     <button type="submit">Send</button>
   </form>
-  <!-- <form id="chat-form" class="row gx-2 mb-3">
-    <div class="col-12 col-md-10">
-      <input type="text" id="message" name="message" class="form-control" placeholder="Type your message..." required>
-    </div>
-    <div class="col-12 col-md-2">
-      <button type="submit" class="btn btn-success w-100">Send</button>
-    </div>
-  </form> -->
 
   <hr>
   <div id="transcriptBox">🎤 <strong>Live Transcription:</strong> <em>Not active</em></div>
 
-  <!-- <div id="controls">
-    <input type="checkbox" id="autoSendToggle" />
-    <label for="autoSendToggle">Auto-send transcribed speech</label>
-    <br>
-    <button id="startVoiceBtn">🎙 Start Voice Input</button>
-    <button id="chatShowHideBtn" type="button">🙈 Hide Chat</button>
-    <button id="showEditorBtn" type="button">🧠 Show Code Editor</button>
-    <button id="download-btn" type="button">💾 Download Chat</button>
-    <button id="downloadVideoBtn" type="button">📹 Record Video</button>
-    <button id="downloadScreenBtn" type="button">🖥️ Record Screen</button>
-    <button id="muteToggleBtn" type="button">🔇 Mute Avatar</button>
-
-  </div> -->
   <div id="controls" class="container my-3">
-    <!-- <div class="mb-3">
-      <a href="{{ url_for('python.interview_select') }}" class="btn btn-outline-secondary">
-        ⬅️ Back
-      </a>
-    </div> -->
 
     <div class="form-check mb-3">
       <input class="form-check-input" type="checkbox" id="autoSendToggle" />
@@ -118,6 +94,11 @@
     <div class="col-6 col-md-4 col-lg-3">
       <button id="muteToggleBtn" type="button" class="btn btn-outline-warning w-100">🔇 Mute Avatar Auto Speak</button>
     </div>
+
+    <div class="col-6 col-md-4 col-lg-3">
+      <button id="toggleVideoBtn" class="btn btn-outline-danger w-100">🎥 Hide Video</button>
+    </div>
+
     
   </div>
 
@@ -146,13 +127,11 @@
 </div>
 
 
-  <!-- AI Avatar -->
-  <div id="avatar" class="avatar" title="I'm Professor Python! Drag me around!"></div>
+  
 
 {% endblock %}
 
 {% block script %}
   <script src="{{ url_for('static', filename='js/python/interview.js') }}"></script>
-   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}

@@ -12,6 +12,7 @@ class User(db.Model, UserMixin):
     session_token = db.Column(db.String(255))
     active = db.Column(db.Boolean, default=False, nullable=False)  # 👈 Added field
     is_admin = db.Column(db.Boolean, default=False)  # 👈 This determines admin access
+    profile_image = db.Column(db.String(255), nullable=True)
 
 
 class Conversation(db.Model, UserMixin):
@@ -24,6 +25,7 @@ class Conversation(db.Model, UserMixin):
     conversation_name = db.Column(db.String(255))
     conversation_type = db.Column(db.String(255))
     subject = db.Column(db.String(100), nullable=False)
+    subject_id = db.Column(db.String(255))
     timestamp = db.Column(db.DateTime, server_default=db.func.now())
 
 
@@ -37,3 +39,40 @@ class MockTestData(db.Model, UserMixin):
 
     def __repr__(self):
         return f"<MockTestData(id={self.id}, question_set_no={self.question_set_no}, subject={self.subject})>"
+    
+
+class UserAIModel(db.Model, UserMixin):
+    __tablename__ = 'users_ai_model'
+    id = db.Column(db.Integer, primary_key=True)
+    user_email = db.Column(db.String(100), unique=True, nullable=False)
+    provider = db.Column(db.String(50), nullable=False)
+    model_name = db.Column(db.String(100), nullable=False)
+
+
+
+class AIModel(db.Model, UserMixin):
+    __tablename__ = 'ai_models'
+    id = db.Column(db.Integer, primary_key=True)
+    provider = db.Column(db.String(50), nullable=False)
+    model_name = db.Column(db.String(100), nullable=False)
+
+
+class Subject(db.Model, UserMixin):
+    __tablename__ = 'subject'
+    id = db.Column(db.Integer, primary_key=True)
+    subject = db.Column(db.String(50), nullable=False)
+    subject_id = db.Column(db.String(50), unique=True, nullable=False)
+    syllabus = db.Column(db.Text, nullable=False)
+    added_at = db.Column(db.DateTime, server_default=db.func.now())
+    user_email = db.Column(db.String(100), nullable=False)
+
+
+class Resume(db.Model):
+    __tablename__ = 'resume'
+    id = db.Column(db.Integer, primary_key=True)
+    resume_id = db.Column(db.String(50), unique=True, nullable=False)
+    user_email = db.Column(db.String(100), nullable=False)
+    filename = db.Column(db.String(255), nullable=False)
+    filepath = db.Column(db.String(255), nullable=False)
+    added_at = db.Column(db.DateTime, server_default=db.func.now())
+    resume_content = db.Column(db.Text, nullable=False)

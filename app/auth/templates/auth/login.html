@@ -1,40 +1,91 @@
 {% extends "base.html" %}
 
-{% block title %}Login - My App{% endblock %}
+{% block title %}Login - learnAnythingWithAI{% endblock %}
 
 {% block link %}
   <link rel="stylesheet" href="{{ url_for('static', filename='css/login_page.css') }}" />
 {% endblock %}
+
 {% block content %}
+<div class="login-container">
   <div class="container">
-    <div class="login-wrapper">
+    <div class="row justify-content-center align-items-center min-vh-100">
+      <div class="col-lg-5 col-md-7 col-sm-9">
+        <div class="login-card card border-0 shadow-lg">
+          <div class="card-body p-5">
+            <!-- Logo and Header -->
+            <div class="text-center mb-4">
+              <img src="{{ url_for('static', filename='images/logo.png') }}" alt="learnAnythingWithAI" class="login-logo mb-3" width="60" height="60">
+              <h2 class="login-title">Welcome Back</h2>
+              <p class="login-subtitle text-muted">Sign in to continue your learning journey</p>
+            </div>
 
-      {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-          <div class="flash-messages">
-            {% for category, message in messages %}
-              <div class="alert alert-{{ category }}">
-                {{ message }}
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                <div class="flash-messages mb-4">
+                  {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} fade-in">
+                      <i class="bi bi-{{ 'check-circle' if category == 'success' else 'exclamation-triangle' }} me-2"></i>
+                      {{ message }}
+                    </div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            {% endwith %}
+
+            <!-- Login Form -->
+            <form method="POST" action="{{ url_for('auth.login') }}" class="login-form">
+              {{ form.hidden_tag() }}
+              
+              <div class="form-group mb-3">
+                <label for="{{ form.username.id }}" class="form-label">
+                  <i class="bi bi-person me-2"></i>Username
+                </label>
+                {{ form.username(class_="form-control", placeholder="Enter your username", required=True) }}
               </div>
-            {% endfor %}
-          </div>
-        {% endif %}
-      {% endwith %}
+              
+              <div class="form-group mb-4">
+                <label for="{{ form.password.id }}" class="form-label">
+                  <i class="bi bi-lock me-2"></i>Password
+                </label>
+                {{ form.password(class_="form-control", placeholder="Enter your password", required=True) }}
+              </div>
+              
+              <div class="d-grid">
+                {{ form.submit(class_="btn btn-primary btn-lg", value="Sign In") }}
+              </div>
+            </form>
 
-      <div class="login-container">
-        <h2>Login</h2>
-        <form method="POST" action="{{ url_for('auth.login') }}">
-          {{ form.hidden_tag() }}
-          {{ form.username(class_="form-control", placeholder="Username", required=True) }}
-          {{ form.password(class_="form-control", placeholder="Password", required=True) }}
-          {{ form.submit(class_="btn btn-primary", value="Login") }}
-        </form>
-        <div class="footer-text">
-          Don't have an account? <a href="{{ url_for('auth.signup') }}">Sign up</a>
+            <!-- Divider -->
+            <div class="text-center my-4">
+              <span class="divider-line"></span>
+              <span class="divider-text">or</span>
+              <span class="divider-line"></span>
+            </div>
+
+            <!-- Sign Up Link -->
+            <div class="text-center">
+              <p class="signup-text mb-0">
+                Don't have an account? 
+                <a href="{{ url_for('auth.signup') }}" class="signup-link">
+                  <i class="bi bi-person-plus me-1"></i>Create Account
+                </a>
+              </p>
+            </div>
+
+            <!-- Additional Links -->
+            <div class="text-center mt-4">
+              <a href="#" class="text-muted small">
+                <i class="bi bi-question-circle me-1"></i>Forgot Password?
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
+</div>
 {% endblock %}
 
 {% block script %}

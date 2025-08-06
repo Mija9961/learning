@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block link %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/python/index.css') }}">
+
+{% endblock %}
+
+
+{% block title %}Welcome - learnAnythingWithAI Learning Hub{% endblock %}
+
+{% block content %}
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-messages">
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <div class="container container-index-page text-center mt-5">
+    <h1 class="display-4 mb-4">Welcome to learnAnythingWithAI Learning Hub!</h1>
+    <p class="lead">
+      This platform is designed to help you master Python,DSA,AI/ML — whether you're learning new concepts or preparing for technical interviews.
+    </p>
+    <hr>
+    <h4 class="display-4 mb-4">{{ subject }}</h4>
+
+    <div class="row mt-5">
+      <div class="col-md-6">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <h3 class="card-title">🧑‍🎓 Learn {{ subject }}</h3>
+            <p class="card-text">
+              Dive into tutorials, challenges, and interactive lessons to build your {{ subject }} skills from beginner to advanced.
+            </p>
+            {% if subject_id %}
+            <a href="{{ url_for('custom_subject.subject_learn_select', subject=subject, subject_id=subject_id) }}" 
+              class="btn btn-primary {% if request.path == url_for('custom_subject.subject_learn_select', subject=subject, subject_id=subject_id) %}active{% endif %}">
+              Start Learning
+            </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <h3 class="card-title">💼 {{ subject }} Interview Practice</h3>
+            <p class="card-text">
+              Test your {{ subject }} knowledge with mock interview questions, get instant feedback, and improve your confidence.
+            </p>
+            <a href="{{ url_for('custom_subject.subject_interview_select', subject=subject, subject_id=subject_id) }}" 
+              class="btn btn-success {% if request.path == url_for('custom_subject.subject_interview_select', subject=subject, subject_id=subject_id) %}active{% endif %}">
+              Start Interview Practice
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+{% endblock %}

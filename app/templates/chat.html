@@ -1,0 +1,93 @@
+
+<!-- Chat Toggle Button -->
+<div id="chat-button-global" class="chat-toggle-btn">
+  <i class="bi bi-chat-text-fill text-white fs-4"></i>
+</div>
+
+
+<!-- Chat Box -->
+<div id="chat-box-global" class="chat-box-global">
+  <div class="chat-header bg-primary text-white d-flex align-items-center justify-content-between p-2">
+    <div class="d-flex align-items-center">
+      <img src="{{ url_for('static', filename='images/chat-avatar.png') }}" class="rounded-circle me-2" width="32" height="32" alt="Agent">
+      <strong>Have a question?</strong>
+    </div>
+    <button class="btn-close btn-close-white btn-sm" id="close-chat" aria-label="Close"></button>
+  </div>
+
+  <div class="chat-body-global p-3" id="chat-messages-global">
+    <div class="d-flex align-items-start mb-2">
+      <img src="{{ url_for('static', filename='images/chat-avatar.png') }}" class="rounded-circle me-2" width="32" height="32" alt="Agent">
+      <div class="chat-message bg-light p-2 rounded">
+        Hi there! This is  Alexi. How can I help you?
+      </div>
+    </div>
+  </div>
+
+    <div class="chat-input-global px-3 pb-3">
+        <form id="chat-form-global">
+            <div class="chat-input-global-wrapper">
+            <input type="text" id="chat-input-global" class="form-control chat-input-global-field" placeholder="Type your message..." required>
+            <button class="btn btn-send" type="submit">Send</button>
+            </div>
+        </form>
+    </div>
+
+</div>
+ <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const chatButton = document.getElementById("chat-button-global");
+    const chatBox = document.getElementById("chat-box-global");
+    const closeBtn = document.getElementById("close-chat");
+    const chatForm = document.getElementById("chat-form-global");
+    const chatInput = document.getElementById("chat-input-global");
+    const chatMessages = document.getElementById("chat-messages-global");
+
+    chatButton.addEventListener("click", () => {
+      chatBox.style.display = "flex";
+      chatButton.style.display = "none";
+    });
+
+    closeBtn.addEventListener("click", () => {
+      chatBox.style.display = "none";
+      chatButton.style.display = "flex";
+    });
+
+    chatForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const userMessage = chatInput.value.trim();
+      if (!userMessage) return;
+
+      // Show user message
+      const userMsgDiv = document.createElement("div");
+      userMsgDiv.className = "d-flex align-items-end justify-content-end mb-2";
+      userMsgDiv.innerHTML = `
+        <div class="chat-message bg-primary text-white p-2 rounded">${userMessage}</div>
+      `;
+      chatMessages.appendChild(userMsgDiv);
+      chatInput.value = "";
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      try {
+        const response = await fetch("/chat/chat-global", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: userMessage })
+        });
+
+
+        const data = await response.json();
+        const botMsgDiv = document.createElement("div");
+        botMsgDiv.className = "d-flex align-items-start mb-2";
+        botMsgDiv.innerHTML = `
+        <img src="{{ url_for('static', filename='images/chat-avatar.png') }}" class="rounded-circle me-2" width="32" height="32" alt="Agent">
+          <div class="chat-message bg-light p-2 rounded">${data.reply}</div>
+        `;
+        chatMessages.appendChild(botMsgDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    });
+  });
+</script>

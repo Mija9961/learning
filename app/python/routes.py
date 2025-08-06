@@ -1,15 +1,14 @@
 from flask import render_template, jsonify, request, flash, session, redirect, url_for
 from flask_login import login_required, current_user
 from . import python_bp
-from app import db, limiter, chromadb_client
-from app.models import User, Conversation
+from app import db, limiter
+from app.models import User, Conversation, AIModel, UserAIModel
 from .util.llm_response import LLMResponse
 from .util.shared_state import chat_sessions
-import asyncio, re
+import asyncio, re, os
 from uuid import uuid4
 from flask_limiter.errors import RateLimitExceeded
 
-from .test import get_data
 from .util.validity_check import is_valid_uuid
 
 @python_bp.route('/')
@@ -24,7 +23,6 @@ def interview():
     if 'username' not in session:
         flash('Please log in first.', 'warning')
         return redirect(url_for('auth.login'))
-
     try:
         # Fetch user email from User model
         user = User.query.filter_by(username=session['username']).first()
@@ -117,7 +115,7 @@ def learn():
 
 
 @python_bp.route('/ask/interview', methods=['POST'])
-@limiter.limit("20 per minute")
+@limiter.limit("3 per minute")
 @login_required
 def ask():
     user_input = request.form.get('message', '').strip()
@@ -128,7 +126,7 @@ def ask():
     conversation_id = request.args.get('conversation_id', str(uuid4()))
 
     try:
-        response = asyncio.run(LLMResponse.get_response(user_input))
+        response = asyncio.run(LLMResponse.get_response_interview(user_input))
 
         new_convo = Conversation(
             user_email=user_email,
@@ -153,7 +151,7 @@ def ask():
 
 
 @python_bp.route('/ask/learn', methods=['POST'])
-@limiter.limit("20 per minute")
+@limiter.limit("3 per minute")
 @login_required
 def ask_learn():
     user_input = request.form.get('message', '').strip()
@@ -193,14 +191,9 @@ def ask_learn():
 @python_bp.errorhandler(RateLimitExceeded)
 def ratelimit_handler(e):
     return jsonify({
-        "response": e.description
+        "response": "❌Warning! You can ask three questions/minute"
     }), 200
 
-
-@python_bp.route('/test', methods=['GET'])
-def test():
-    res = get_data()
-    return res
 
 
 @python_bp.route('/delete_conversation/learn/<conversation_id>', methods=['POST'])
@@ -263,6 +256,14 @@ def learn_select():
             ).order_by(Conversation.timestamp.asc()).all()
         else:
             conversations = []
+
+
+        # Set AI model
+        user_model = UserAIModel.query.filter_by(user_email=current_user.email).first()
+        selected_provider = user_model.provider if user_model else os.environ.get("DEFAULT_AI_PROVIDER", None)
+        selected_model = user_model.model_name if user_model else os.environ.get("DEFAULT_AI_MODEL", None)
+        session['ai_provider'] = selected_provider.lower()
+        session['ai_model'] = selected_model.lower()
 
     except Exception as e:
         flash(f"Error loading conversations: {e}", "danger")
@@ -368,6 +369,13 @@ def interview_select():
             ).order_by(Conversation.timestamp.asc()).all()
         else:
             conversations = []
+
+        # Set AI model
+        user_model = UserAIModel.query.filter_by(user_email=current_user.email).first()
+        selected_provider = user_model.provider if user_model else os.environ.get("DEFAULT_AI_PROVIDER", None)
+        selected_model = user_model.model_name if user_model else os.environ.get("DEFAULT_AI_MODEL", None)
+        session['ai_provider'] = selected_provider.lower()
+        session['ai_model'] = selected_model.lower()
 
     except Exception as e:
         flash(f"Error loading conversations: {e}", "danger")

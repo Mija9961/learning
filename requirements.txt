@@ -12,9 +12,16 @@ mysqlclient
 flask_mysqldb
 beautifulsoup4
 
-autogen
 autogen-agentchat
 autogen-ext
 autogen-ext[openai]
-chromadb
 sentence_transformers
+
+langchain
+langchain_community
+langchain-tavily
+# dockduckgo_search
+ddgs
+
+langgraph
+PyPDF2
