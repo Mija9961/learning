@@ -5,7 +5,7 @@ load_dotenv()
 
 class Config:
     # Security
-    SECRET_KEY = os.environ.get("SECRET_KEY", "f8b2e22e57d64d08a7b0c20e3dcf8472")
+    SECRET_KEY = os.environ.get("SECRET_KEY", os.environ['SECRET_KEY'])
 
     # Database
     SQLALCHEMY_DATABASE_URI = (

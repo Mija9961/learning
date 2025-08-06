@@ -20,4 +20,8 @@ sentence_transformers
 langchain
 langchain_community
 langchain-tavily
-dockduckgo_search
+# dockduckgo_search
+ddgs
+
+langgraph
+PyPDF2

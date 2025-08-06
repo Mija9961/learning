@@ -6,8 +6,8 @@ __pycache__/
 venv/
 
 # Flask environment files
-.env
-.flaskenv
+# .env
+# .flaskenv
 
 # Instance folder (holds local config, DB, etc.)
 instance/
