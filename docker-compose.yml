@@ -1,0 +1,109 @@
+version: '3.8'
+
+services:
+  web:
+    image: mija2022/learn-anything-with-ai-web
+    container_name: learn-anything-with-ai-web
+    restart: unless-stopped
+    ports:
+      - "5001:5000"
+    environment:
+      - FLASK_APP=run.py
+      - FLASK_DEBUG=0
+      - MYSQL_HOST=db
+      - MYSQL_PORT=13306
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DB=${MYSQL_DB}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - TAVILY_API_KEY=${TAVILY_API_KEY}
+      - SECRET_KEY=${SECRET_KEY}
+      - CHROMADB_HOST=chromadb
+      - CHROMADB_PORT=8011
+      - EMAIL_SERVER=${EMAIL_SERVER}
+      - PORT=${PORT}
+      - SENDER_EMAIL=${SENDER_EMAIL}
+      - PASSWORD_EMAIL=${PASSWORD_EMAIL}
+      - EMAIL_SEND_ENABLED=${EMAIL_SEND_ENABLED}
+    volumes:
+      - ./app:/myapp/app
+      - ./static:/myapp/static
+      - ./uploads:/myapp/static/images/uploads
+    depends_on:
+      - db
+      - chromadb
+      - redis
+    networks:
+      - learn-anything-network
+
+  db:
+    image: mariadb:10.11
+    container_name: learn-anything-with-ai-db
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DB}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "13306:3306"
+    networks:
+      - learn-anything-network
+    command: --default-authentication-plugin=mysql_native_password
+
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: learn-anything-with-ai-chromadb
+    restart: unless-stopped
+    volumes:
+      - chromadb_data:/chroma/data
+    ports:
+      - "8011:8000"
+    networks:
+      - learn-anything-network
+
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: learn-anything-with-ai-phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    environment:
+      - PMA_HOST=db
+      - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
+      - PMA_ARBITRARY=1
+    depends_on:
+      - db
+    networks:
+      - learn-anything-network
+
+  redis:
+    image: redis:alpine 
+    container_name: learn-anything-with-ai-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - learn-anything-network
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  mysql_data:
+  chromadb_data:
+  redis_data:
+
+networks:
+  learn-anything-network:
+    driver: bridge

@@ -15,7 +15,9 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Rate limiting
-    RATELIMIT_STORAGE_URL = "redis://localhost:6379"
+    REDIS_HOST=os.getenv("REDIS_HOST", "localhost")
+    REDIS_PORT=int(os.getenv("REDIS_PORT", 6379))
+    RATELIMIT_STORAGE_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}"
     RATELIMIT_HEADERS_ENABLED = True
 
     # Upload Folder
