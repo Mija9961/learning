@@ -96,6 +96,8 @@ USER appuser
 # Expose application port
 EXPOSE 5000
 
+ENV PYTHONPATH=/myapp
+
 # Run the app
 CMD ["python", "run.py"]
 

@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   web:
-    image: mija2022/learn-anything-with-ai-web
+    image: mija2022/learn-anything-with-ai:v1
     container_name: learn-anything-with-ai-web
     restart: unless-stopped
     ports:
@@ -29,7 +29,7 @@ services:
       - PASSWORD_EMAIL=${PASSWORD_EMAIL}
       - EMAIL_SEND_ENABLED=${EMAIL_SEND_ENABLED}
     volumes:
-      - ./app:/myapp/app
+      # - ./app:/myapp/app
       - ./static:/myapp/static
       - ./uploads:/myapp/static/images/uploads
     depends_on:

@@ -6,6 +6,10 @@ from ..models import User
 from ..extensions import db
 from .forms import LoginForm, SignupForm
 import uuid
+from datetime import datetime, timedelta
+from ..util.email.email_content import GetEmailContent
+from ..util.email.send_email import sync_send_email
+
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -116,13 +120,36 @@ def signup():
                 flash('Username already registered. Please use a different username.', 'danger')
                 return redirect(url_for('auth.signup'))
 
+            # Send Registration Email
+
+            # Generate activation token
+            activation_token = str(uuid.uuid4())
+            
+            # Create activation link
+            activation_link = url_for('auth.activate_account', 
+                                    token=activation_token, 
+                                    _external=True)
+            
+            # Generate email content
+            email_content = GetEmailContent.get_welcome_email_html(
+                username=username,
+                activation_link=activation_link
+            )
+            
+            # Send email
+            sync_send_email(
+                subject="Welcome to LearnAnythingWithAI - Activate Your Account",
+                receiver_email=email,
+                html_content=email_content
+            )
+        
             # Create new user
-            new_user = User(username=username, email=email, password=hashed_password)
+            new_user = User(username=username, email=email, password=hashed_password, activation_token=activation_token)
             db.session.add(new_user)
             db.session.commit()
             
             
-            flash('Registration successful! Please log in.', 'success')
+            flash('Registration successful! Please check your email and activate account to log in.', 'success')
             return redirect(url_for('auth.login'))
 
         except Exception as e:
@@ -137,45 +164,6 @@ def signup():
     return render_template('auth/signup.html', form=form)
 
 
-
-# @auth_bp.route('/confirm_session', methods=['GET', 'POST'])
-# def confirm_session():
-#     if request.method == 'POST':
-#         action = request.form.get('action')
-#         if action == 'confirm':
-#             # User chose to logout other sessions
-#             session_token = session.pop('pending_token', None)
-#             username = session.pop('username_pending', None)
-#             user_id = session.pop('user_id_pending', None)
-
-#             if session_token and username and user_id:
-#                 # Update the session token in the database using SQLAlchemy
-#                 user = db.session.query(User).filter_by(id=user_id).first()
-#                 if user:
-#                     user.session_token = session_token
-#                     db.session.commit()
-
-#                     # Set active session data
-#                     session['username'] = username
-#                     session['session_token'] = session_token
-
-#                     flash("Logged in and other sessions are now logged out.", "success")
-#                     return redirect(url_for('index'))
-#                 else:
-#                     flash("User not found.", "danger")
-#                     return redirect(url_for('auth.login'))
-#             else:
-#                 flash("Session confirmation failed.", "danger")
-#                 return redirect(url_for('auth.login'))
-#         else:
-#             # Cancel and go back to login
-#             session.pop('pending_token', None)
-#             session.pop('username_pending', None)
-#             session.pop('user_id_pending', None)
-#             flash("Login cancelled.", "info")
-#             return redirect(url_for('auth.login'))
-
-#     return render_template('auth/confirm_session.html')
 
 @auth_bp.route('/confirm_session', methods=['GET', 'POST'])
 def confirm_session():
@@ -243,3 +231,101 @@ def confirm_session():
             return redirect(url_for('auth.confirm_session'))
 
     return render_template('auth/confirm_session.html', username=username_pending)
+
+
+@auth_bp.route('/activate/<token>')
+def activate_account(token):
+    """
+    Activates a user account using the provided activation token.
+    Token expires after 24 hours.
+    """
+    try:
+        # Find user with matching activation token
+        user = User.query.filter_by(activation_token=token).first()
+        print(f"Activation token: {token} ")
+        if not user:
+            flash('Invalid activation link.', 'danger')
+            return redirect(url_for('auth.login'))
+            
+        # Check if token is expired (24 hours)
+        token_age = datetime.utcnow() - user.activation_token_created_at
+        if token_age > timedelta(hours=24):
+            flash('Activation link has expired. Please request a new one.', 'warning')
+            return redirect(url_for('auth.resend_activation'))
+            
+        # Activate account
+        user.active = True
+        user.activation_token = None
+        user.activation_token_created_at = None
+        user.email_verified = True
+        user.email_verified_at = datetime.utcnow()
+        
+        db.session.commit()
+        
+        flash('Your account has been successfully activated! You can now log in.', 'success')
+        return redirect(url_for('auth.login'))
+        
+    except Exception as e:
+        db.session.rollback()
+        flash('An error occurred while activating your account.', 'danger')
+        print(f"An error occurred while activating your account. {e}")
+        return redirect(url_for('auth.login'))
+
+
+@auth_bp.route('/resend-activation', methods=['GET', 'POST'])
+def resend_activation():
+    """
+    Allows users to request a new activation link if the original expired.
+    """
+    if request.method == 'POST':
+        email = request.form.get('email')
+        
+        if not email:
+            flash('Please provide your email address.', 'danger')
+            return render_template('auth/resend_activation.html')
+            
+        user = User.query.filter_by(email=email).first()
+        
+        if not user:
+            flash('No account found with that email address.', 'danger')
+            return render_template('auth/resend_activation.html')
+            
+        if user.active:
+            flash('This account is already activated.', 'info')
+            return redirect(url_for('auth.login'))
+            
+        # Generate new activation token
+        new_token = str(uuid.uuid4())
+        user.activation_token = new_token
+        user.activation_token_created_at = datetime.utcnow()
+        print("")
+        try:
+            # Create activation link
+            activation_link = url_for('auth.activate_account', 
+                                    token=new_token, 
+                                    _external=True)
+            
+            # Generate email content
+            email_content = GetEmailContent.get_welcome_email_html(
+                username=user.username,
+                activation_link=activation_link
+            )
+            
+            # Send email
+            sync_send_email(
+                subject="LearnAnythingWithAI - New Account Activation Link",
+                receiver_email=user.email,
+                html_content=email_content
+            )
+            
+            db.session.commit()
+            flash('A new activation link has been sent to your email address.', 'success')
+            return redirect(url_for('auth.login'))
+            
+        except Exception as e:
+            db.session.rollback()
+            flash('An error occurred while sending the activation link.', 'danger')
+            print(f"An error occurred while sending the activation link.{e}")
+            return render_template('auth/resend_activation.html')
+    
+    return render_template('auth/resend_activation.html')
