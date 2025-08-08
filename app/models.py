@@ -1,6 +1,7 @@
 from .extensions import db
 from flask_login import UserMixin
 from sqlalchemy.dialects.mysql import JSON
+from datetime import datetime
 
 # Define Models
 class User(db.Model, UserMixin):
@@ -13,7 +14,11 @@ class User(db.Model, UserMixin):
     active = db.Column(db.Boolean, default=False, nullable=False)  # 👈 Added field
     is_admin = db.Column(db.Boolean, default=False)  # 👈 This determines admin access
     profile_image = db.Column(db.String(255), nullable=True)
-
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
+    activation_token = db.Column(db.String(255))
+    activation_token_created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    email_verified = db.Column(db.Boolean, default=False, nullable=False)
+    email_verified_at = db.Column(db.DateTime)
 
 class Conversation(db.Model, UserMixin):
     __tablename__ = 'conversations'
