@@ -94,7 +94,7 @@ RUN adduser --disabled-password --gecos '' appuser && \
 USER appuser
 
 # Expose application port
-EXPOSE 5000
+EXPOSE 443
 
 ENV PYTHONPATH=/myapp
 

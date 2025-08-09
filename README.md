@@ -15,11 +15,10 @@ A modern, AI-powered learning platform built with Flask that provides interactiv
 ## 🛠️ Technology Stack
 
 - **Backend**: Python 3.12, Flask
-- **Database**: MySQL
+- **Database**: MySQL, ChromaDB
 - **Frontend**: Bootstrap 5, JavaScript
-- **AI Integration**: OpenAI GPT
+- **AI Integration**: OpenAI GPT, Google GenAI
 - **Authentication**: JWT
-- **Testing**: Pytest
 
 ## 📋 Prerequisites
 
@@ -65,7 +64,7 @@ GOOGLE_API_KEY=your-google-api-key
 TAVILY_API_KEY=your-tavily-api-key
 
 # Flask Secret Key
-SECRET_KEY=f8b2e22e57d64d08a7b0c20e3dcf8472
+SECRET_KEY=
 # Email Set Up
 PASSWORD_EMAIL=your-app-password
 EMAIL_SERVER='smtp.gmail.com'
