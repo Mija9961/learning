@@ -29,7 +29,7 @@ class GetEmailContent:
                     <p>To activate your account and start your learning journey, please click the button below:</p>
                     
                     <center>
-                        <a href="{activation_link}" class="button">Activate Your Account</a>
+                        <a style="color: white" href="{activation_link}" class="button">Activate Your Account</a>
                     </center>
                     
                     <p>This activation link will expire in 24 hours for security reasons.</p>
