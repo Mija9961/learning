@@ -21,6 +21,8 @@ class Config:
     RATELIMIT_HEADERS_ENABLED = True
 
     # Upload Folder
-    UPLOAD_FOLDER = os.environ['UPLOAD_FOLDER']
+    UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'app', 'static', 'images', 'uploads')
+    ALLOWED_EXTENSIONS = {'pdf'}
+    MAX_CONTENT_LENGTH = 10 * 1024 * 1024  # 16MB max file size
 
 
