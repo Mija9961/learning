@@ -44,14 +44,11 @@
 # ---------- Stage 1: Build ----------
 FROM python:3.12-slim AS builder
 
-# Set environment variables
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1
 
-# Set working directory
 WORKDIR /install
 
-# Install build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     gcc \
@@ -59,7 +56,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements and install into a temp directory
 COPY requirements.txt .
 RUN pip install --prefix=/install/packages --no-cache-dir -r requirements.txt
 
@@ -91,7 +87,8 @@ COPY . .
 # Create a non-root user
 RUN adduser --disabled-password --gecos '' appuser && \
     chown -R appuser:appuser /myapp
-USER appuser
+
+# USER appuser
 
 # Expose application port
 EXPOSE 443
@@ -103,4 +100,4 @@ CMD ["python", "run.py"]
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
-    CMD curl -f http://localhost:5000/ || exit 1
+    CMD curl -f http://localhost:443/ || exit 1

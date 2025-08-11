@@ -5,7 +5,7 @@ from uuid import uuid4
 from flask import session
 from .shared_state import chat_sessions
 from bs4 import BeautifulSoup
-
+from flask import current_app
 # Setup model
 
 model_client = OpenAIChatCompletionClient(model="gpt-4.1-mini")
