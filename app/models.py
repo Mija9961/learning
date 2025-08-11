@@ -81,3 +81,14 @@ class Resume(db.Model):
     filepath = db.Column(db.String(255), nullable=False)
     added_at = db.Column(db.DateTime, server_default=db.func.now())
     resume_content = db.Column(db.Text, nullable=False)
+
+
+
+class Document(db.Model):
+    __tablename__ = 'document'
+    id = db.Column(db.Integer, primary_key=True)
+    document_id = db.Column(db.String(50), unique=True, nullable=False)
+    user_email = db.Column(db.String(100), nullable=False)
+    filename = db.Column(db.String(255), nullable=False)
+    filepath = db.Column(db.String(255), nullable=False)
+    created_at = db.Column(db.DateTime, server_default=db.func.now())

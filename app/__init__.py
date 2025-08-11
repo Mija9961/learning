@@ -26,6 +26,8 @@ def create_app():
     from .chat import chat_bp
     from .custom_subject import custom_subject_bp
     from .mock_interview import mock_interview_bp
+    from .rag import rag_bp
+
     
     app.register_blueprint(auth_bp)
     app.register_blueprint(admin_bp, url_prefix='/admin')
@@ -36,6 +38,8 @@ def create_app():
     app.register_blueprint(chat_bp, url_prefix='/chat')
     app.register_blueprint(custom_subject_bp, url_prefix='/custom_subject')
     app.register_blueprint(mock_interview_bp, url_prefix='/mock_interview')
+    app.register_blueprint(rag_bp, url_prefix='/rag')
+
 
 
     with app.app_context():

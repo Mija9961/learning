@@ -9,16 +9,15 @@ Flask-Limiter
 python-dotenv
 flask-limiter[redis]
 mysqlclient
-flask_mysqldb
 beautifulsoup4
 
 autogen-agentchat
 autogen-ext
 autogen-ext[openai]
-sentence_transformers
 
 langchain
 langchain_community
+langchain-text-splitters
 langchain-tavily
 # dockduckgo_search
 ddgs
