@@ -66,7 +66,9 @@ README*
 
 # Media and static files (if served externally)
 media/
-static/
+static/images
+static/remsumes
+static/documents
 uploads/
 
 # Temporary files

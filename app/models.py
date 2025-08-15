@@ -72,7 +72,7 @@ class Subject(db.Model, UserMixin):
     user_email = db.Column(db.String(100), nullable=False)
 
 
-class Resume(db.Model):
+class Resume(db.Model, UserMixin):
     __tablename__ = 'resume'
     id = db.Column(db.Integer, primary_key=True)
     resume_id = db.Column(db.String(50), unique=True, nullable=False)
@@ -84,7 +84,7 @@ class Resume(db.Model):
 
 
 
-class Document(db.Model):
+class Document(db.Model, UserMixin):
     __tablename__ = 'document'
     id = db.Column(db.Integer, primary_key=True)
     document_id = db.Column(db.String(50), unique=True, nullable=False)
@@ -92,3 +92,15 @@ class Document(db.Model):
     filename = db.Column(db.String(255), nullable=False)
     filepath = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
+
+
+class UserMessage(db.Model, UserMixin):
+    __tablename__ = 'user_message'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), nullable=False)
+    email = db.Column(db.String(100), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+    received_at = db.Column(db.DateTime, server_default=db.func.now())
+    is_read_message = db.Column(db.Boolean, default=False)
+    client_ip = db.Column(db.String(50), nullable=True)
+

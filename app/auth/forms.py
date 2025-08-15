@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError
 import re
 
@@ -37,3 +37,17 @@ class SignupForm(FlaskForm):
             raise ValidationError('Password must contain at least one digit.')
         if not re.search(r'[\W_]', password):
             raise ValidationError('Password must contain at least one special character (e.g. !, @, #, $).')
+        
+
+
+class SendMessageForm(FlaskForm):
+    name = StringField('Name', validators=[
+        DataRequired(), Length(min=3, max=25)
+    ])
+    email = StringField('Email', validators=[
+        DataRequired(), Email()
+    ])
+    
+    message = TextAreaField('Message', validators=[
+        DataRequired(), Length(min=10)
+    ])

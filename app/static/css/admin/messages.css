@@ -1,0 +1,9 @@
+.read-message {
+    background-color: #e9f7ef;
+}
+.unread-message {
+    background-color: #fff3cd;
+}
+.toggle-btn {
+    min-width: 100px;
+}

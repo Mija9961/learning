@@ -1,7 +1,7 @@
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, jsonify
 from flask_login import login_required, current_user
 from . import admin_bp
-from ..models import User, AIModel
+from ..models import User, AIModel, UserMessage
 from ..extensions import db
 import os
 from .util.decorators import admin_required
@@ -83,3 +83,23 @@ def delete_ai_model(model_id):
     db.session.commit()
     flash("AI Model deleted.", "success")
     return redirect(url_for("admin.ai_models"))
+
+
+
+@admin_bp.route('/messages')
+@login_required
+@admin_required
+def view_messages():
+    messages = UserMessage.query.order_by(UserMessage.received_at.desc()).all()
+    return render_template('admin/messages.html', messages_list=messages, user=current_user)
+
+@admin_bp.route("/toggle-read/<int:msg_id>", methods=["POST"])
+@login_required
+def toggle_read(msg_id):
+    message = UserMessage.query.get_or_404(msg_id)
+    message.is_read_message = not message.is_read_message
+    db.session.commit()
+    return jsonify({
+        "success": True,
+        "is_read": message.is_read_message
+    })

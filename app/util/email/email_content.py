@@ -1,3 +1,5 @@
+from datetime import datetime
+
 class GetEmailContent:
     @staticmethod
     def get_welcome_email_html(username, activation_link):
@@ -73,4 +75,28 @@ class GetEmailContent:
         </div>
         """
 
+    def get_thanks_email_html():
+
+        # Get the current date and time
+        current_datetime = datetime.now()
+
+        # Extract the year from the datetime object
+        current_year = current_datetime.year
+        return f"""
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; 
+                    border: 1px solid #e0e0e0; border-radius: 8px; background-color: #fafafa;">
+            <h2 style="color: #333333; text-align: center;">Thank You for Contacting Us</h2>
+            <p style="font-size: 16px; color: #555555; line-height: 1.5;">
+                We have successfully received your message. Our team will review your request and get back to you 
+                as soon as possible.
+            </p>
+            <p style="font-size: 16px; color: #555555; line-height: 1.5;">
+                If you have any urgent concerns, feel free to reply to this email or call our support line.
+            </p>
+            <hr style="border: none; border-top: 1px solid #dddddd; margin: 20px 0;">
+            <p style="font-size: 14px; color: #999999; text-align: center;">
+                &copy; {current_year} LearnAnythingWithAI. All rights reserved.
+            </p>
+        </div>
+        """
 
