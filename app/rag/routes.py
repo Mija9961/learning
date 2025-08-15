@@ -1,7 +1,7 @@
-from flask import render_template, flash, redirect, url_for, request, jsonify, current_app, send_from_directory, abort
+from flask import render_template, flash, redirect, url_for, request, jsonify, current_app, send_from_directory, abort, session
 from flask_login import current_user, login_required
 from . import rag_bp
-from ..models import User, Document
+from ..models import User, Document, UserAIModel
 from ..extensions import db
 import os, asyncio, uuid
 from .util.doc_modifier import extract_text_from_pdf
@@ -22,7 +22,12 @@ def upload_doc():
     results = []
     formatted_answer = None
     documents = Document.query.filter_by(user_email=current_user.email).order_by(Document.created_at.desc()).all()
-
+    # Set AI model
+    user_model = UserAIModel.query.filter_by(user_email=current_user.email).first()
+    selected_provider = user_model.provider if user_model else os.environ.get("DEFAULT_AI_PROVIDER", None)
+    selected_model = user_model.model_name if user_model else os.environ.get("DEFAULT_AI_MODEL", None)
+    session['ai_provider'] = selected_provider.lower()
+    session['ai_model'] = selected_model.lower()
     if request.method == 'POST':
         # Handle memory reset
         if 'reset' in request.form:
@@ -45,7 +50,7 @@ def upload_doc():
                     
                     # Create unique filename
                     filename = secure_filename(f"{file.filename}")
-                    filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+                    filepath = os.path.join(current_app.config['UPLOAD_FOLDER_DOC'], filename)
                     
                     # Ensure directory exists
                     os.makedirs(os.path.dirname(filepath), exist_ok=True)
@@ -106,7 +111,8 @@ def upload_doc():
                         f"Context:\n{[r['text'] for r in results]}\n\n"
                         f"Query:\n{query}"
                     )
-                    formatted_answer = "Test" #asyncio.run(LLMResponse.get_formatted_response_from_llm(prompt))
+                    print(f"prompt::{prompt}")
+                    formatted_answer = asyncio.run(LLMResponse.get_formatted_response_from_llm(prompt))
                 except Exception as e:
                     current_app.logger.error(f"Error formatting response: {str(e)}")
                     formatted_answer = "Error processing response"
@@ -133,7 +139,7 @@ def upload_document():
         
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
-        filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+        filepath = os.path.join(current_app.config['UPLOAD_FOLDER_DOC'], filename)
         file.save(filepath)
         
         # Create document record in database
@@ -224,7 +230,7 @@ def preview_document(doc_id):
         # For PDFs and text files, serve directly
         if file_ext in {'pdf'}:
             return send_from_directory(
-                current_app.config['UPLOAD_FOLDER'],
+                current_app.config['UPLOAD_FOLDER_DOC'],
                 document.filename,
                 as_attachment=False
             )

@@ -4,6 +4,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 import os
 from dotenv import load_dotenv
 import logging
+from flask import current_app
 
 # Load environment variables and setup logging
 load_dotenv()

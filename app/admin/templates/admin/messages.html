@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Admin | User Messages{% endblock %}
+
+{% block link %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/messages.css') }}">
+{% endblock %}
+
+{% block content %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<div class="container mt-4">
+    <h2 class="mb-4">📩 User Messages</h2>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <strong>Messages Table</strong>
+        </div>
+        <div class="card-body table-responsive">
+            <table class="table table-bordered table-striped align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Message</th>
+                        <th>Received At</th>
+                        <th>Client IP</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for msg in messages_list %}
+                    <tr class="{{ 'table-success' if msg.is_read_message else 'table-warning' }}">
+                        <td>{{ loop.index }}</td>
+                        <td>{{ msg.name }}</td>
+                        <td>{{ msg.email }}</td>
+                        <td>{{ msg.message }}</td>
+                        <td>{{ msg.received_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                        <td>{{ msg.client_ip }}</td>
+                        <td>
+                            <span class="badge {{ 'bg-success' if msg.is_read_message else 'bg-warning text-dark' }}">
+                                {{ 'Read' if msg.is_read_message else 'Unread' }}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn toggle-btn {{ 'btn-outline-success' if msg.is_read_message else 'btn-outline-warning' }}"
+                                    data-id="{{ msg.id }}">
+                                {{ 'Mark Unread' if msg.is_read_message else 'Mark Read' }}
+
+                            </button>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center">No messages found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script>
+$(document).on("click", ".toggle-btn", function () {
+    var btn = $(this);
+    var msgId = btn.data("id");
+
+    $.post(`/admin/toggle-read/${msgId}`, function (data) {
+        if (data.success) {
+            var row = btn.closest("tr");
+            var statusBadge = row.find("td:nth-child(7) .badge");
+
+            if (data.is_read) {
+                row.removeClass("table-warning").addClass("table-success");
+                statusBadge.removeClass("bg-warning text-dark").addClass("bg-success").text("Read");
+                btn.removeClass("btn-outline-warning").addClass("btn-outline-success")
+                   .text("Mark Unread");
+            } else {
+                row.removeClass("table-success").addClass("table-warning");
+                statusBadge.removeClass("bg-success").addClass("bg-warning text-dark").text("Unread");
+                btn.removeClass("btn-outline-success").addClass("btn-outline-warning")
+                   .text("Mark Read");
+            }
+        }
+    });
+});
+</script>
+
+{% endblock %}

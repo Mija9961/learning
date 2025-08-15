@@ -1,14 +1,14 @@
 from flask import render_template, redirect, url_for, flash, request, session
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import login_user, logout_user, current_user
+from flask_login import login_user, logout_user, current_user, login_required
 from . import auth_bp
-from ..models import User
+from ..models import User, UserMessage
 from ..extensions import db
-from .forms import LoginForm, SignupForm
+from .forms import LoginForm, SignupForm, SendMessageForm
 import uuid
 from datetime import datetime, timedelta
 from ..util.email.email_content import GetEmailContent
-from ..util.email.send_email import sync_send_email
+from ..util.email.send_email import sync_send_email, email_exists, check_email_exists_and_send_email
 
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
@@ -52,13 +52,13 @@ def login():
                     login_user(user)
                     if user.is_admin:
                         return redirect(url_for('admin.index'))
-                    return redirect(url_for('user.dashboard'))  # or 'home' if that's your route
+                    return redirect(url_for('user.dashboard'))
             else:
                 flash("Invalid password.", "danger")
         else:
             flash("User not found.", "danger")
     elif 'username' in session:
-        return redirect(url_for('user.dashboard'))  # or 'home'
+        return redirect(url_for('user.dashboard'))
 
     return render_template('auth/login.html', form=form)
 
@@ -159,7 +159,7 @@ def signup():
 
     # If user already logged in, redirect
     if 'username' in session:
-        return redirect(url_for('home'))
+        return redirect(url_for('index'))
 
     return render_template('auth/signup.html', form=form)
 
@@ -329,3 +329,64 @@ def resend_activation():
             return render_template('auth/resend_activation.html')
     
     return render_template('auth/resend_activation.html')
+
+@auth_bp.route('/send_message', methods=['POST'])
+# @login_required
+def send_message():
+    form = SendMessageForm()
+    try:
+        if form.validate_on_submit():
+            # Get client IP address
+            if request.headers.get('X-Forwarded-For'):
+                client_ip = request.headers.get('X-Forwarded-For').split(',')[0]
+            else:
+                client_ip = request.remote_addr
+            name = form.name.data.strip()
+            email = form.email.data.strip().lower()
+            message = form.message.data.strip()
+
+            # Check if the email actually exists
+            #TODO uncomment this code when you have server email, noreply@<company_name>.com
+            # if not email_exists(email):
+            #     flash('The provided email does not exist. Please enter a valid email.', 'danger')
+            #     return redirect(url_for('index'))
+
+            # Generate email content
+            email_content = GetEmailContent.get_thanks_email_html()
+
+            #TODO uncomment this code when you have server email, noreply@<company_name>.com
+            # Send email
+            sync_send_email(
+                subject="Thanks For Your Message",
+                receiver_email=email,
+                html_content=email_content
+            )
+
+            #TODO comment/remove this code when you have server email, noreply@<company_name>.com
+            # Send email
+            res = check_email_exists_and_send_email(
+                subject="Thanks For Your Message",
+                receiver_email=email,
+                html_content=email_content
+            )
+
+            if not res:
+                flash(f'Unable to send your message, please check your email and ensure it really exists', 'danger')
+                return redirect(url_for('index'))
+
+            # Save to DB
+            new_user = UserMessage(name=name, email=email, message=message, client_ip=client_ip)
+            db.session.add(new_user)
+            db.session.commit()
+
+            flash('Message sent successfully! Please check your email.', 'success')
+            return redirect(url_for('index'))
+        else:
+            flash(f'Please correct the errors in the form and try again. {form.errors}', 'danger')
+            return redirect(url_for('index'))
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error in send_message(): {e}")
+        flash('Error sending your message. Please try again.', 'danger')
+        return redirect(url_for('index'))

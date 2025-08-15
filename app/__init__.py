@@ -2,6 +2,7 @@ from flask import Flask, render_template
 from .extensions import db, login_manager, migrate, limiter
 from .util.hooks import check_session_validity
 from flask_login import current_user
+from .auth.forms import SendMessageForm
 
 def create_app():
     app = Flask(__name__)
@@ -54,7 +55,8 @@ def create_app():
         
     @app.route('/', endpoint='index')
     def home():
-        return render_template('home.html', user=current_user)
+        form = SendMessageForm()
+        return render_template('home.html', user=current_user, form=form)
     
     # Custom 404 error handler
     @app.errorhandler(404)
